@@ -1,1 +1,62 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary-navy: #14263D;
+    --dark-navy: #0B1728;
+    --gold: #D7A94B;
+    --gold-hover: #C5973A;
+    --light-grey: #F5F6F8;
+    --main-text: #202A36;
+    --whatsapp-green: #25D366;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--main-text);
+    background-color: var(--light-grey);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', 'Inter', sans-serif;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F6F8;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Custom Utilities */
+.bg-primary-navy { background-color: #14263D; }
+.bg-dark-navy { background-color: #0B1728; }
+.bg-gold { background-color: #D7A94B; }
+.bg-gold-hover { background-color: #C5973A; }
+.bg-light-grey { background-color: #F5F6F8; }
+.bg-whatsapp { background-color: #25D366; }
+
+.text-primary-navy { color: #14263D; }
+.text-dark-navy { color: #0B1728; }
+.text-gold { color: #D7A94B; }
+.text-main { color: #202A36; }
+.text-whatsapp { color: #25D366; }
+
+.border-gold { border-color: #D7A94B; }
+.border-primary-navy { border-color: #14263D; }
+
+/* Subtle glassmorphism effect */
+.glass-header {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
