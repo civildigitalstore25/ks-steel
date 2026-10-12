@@ -122,12 +122,12 @@ export const ProductDetailPage: React.FC = () => {
                 
                 {/* Brand Badge in Corner */}
                 {!isGeneric && (
-                  <div className="absolute top-4 left-4 bg-white/95 px-3 py-1.5 rounded-lg shadow-md border border-slate-200 flex items-center gap-2 backdrop-blur-sm">
+                  <div className="absolute top-4 left-4 z-10 flex h-14 max-w-[46%] items-center justify-center rounded-lg bg-white px-3 shadow-[0_6px_16px_rgba(11,23,40,0.28)] ring-1 ring-black/10">
                     {brandLogo ? (
                       <img
                         src={brandLogo}
                         alt={`${product.brand} logo`}
-                        className="h-5 max-w-[100px] object-contain"
+                        className="h-10 w-auto max-w-full object-contain"
                       />
                     ) : (
                       <>

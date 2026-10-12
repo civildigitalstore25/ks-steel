@@ -31,19 +31,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Dedicated Brand Badge / Logo Area */}
         {!isGeneric && (
-          <div className="absolute top-3 right-3 bg-white/95 text-[#14263D] px-2.5 py-1 rounded-md shadow-sm border border-slate-200 flex items-center gap-1.5 backdrop-blur-sm">
+          <div className="absolute top-2.5 right-2.5 z-10 flex h-12 max-w-[52%] items-center justify-center rounded-lg bg-white px-2.5 shadow-[0_6px_16px_rgba(11,23,40,0.28)] ring-1 ring-black/10">
             {brandLogo ? (
               <img
                 src={brandLogo}
                 alt={`${product.brand} logo`}
-                className="h-4 max-w-[80px] object-contain"
+                className="h-8 w-auto max-w-full object-contain"
                 loading="lazy"
               />
             ) : (
-              <>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold tracking-tight text-[#14263D]">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#D7A94B] shrink-0" />
-                <span className="text-[11px] font-bold tracking-tight">{product.brand}</span>
-              </>
+                {product.brand}
+              </span>
             )}
           </div>
         )}

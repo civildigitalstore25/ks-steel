@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, MessageSquare, X } from 'lucide-react';
+import { Search, MessageSquare, X, ChevronDown } from 'lucide-react';
 import { getWhatsAppEnquiryUrl } from '../data/products';
 
 interface ProductSearchToolbarProps {
@@ -43,22 +43,25 @@ export const ProductSearchToolbar: React.FC<ProductSearchToolbarProps> = ({
         </div>
 
         {/* Brand Filter */}
-        <div className="md:col-span-3 flex flex-col sm:flex-row sm:items-center gap-2">
+        <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)] items-center gap-2 min-w-0">
           <label className="text-xs font-bold text-[#14263D] uppercase tracking-wider shrink-0 hidden sm:block">
             FILTER BY BRAND:
           </label>
-          <select
-            value={selectedBrand}
-            onChange={(e) => onBrandChange(e.target.value)}
-            className="w-full py-3 px-3.5 bg-white border border-[#E2E6EC] rounded-xl text-sm text-[#202A36] font-semibold focus:outline-none focus:ring-2 focus:ring-[#D7A94B] focus:border-transparent"
-          >
-            <option value="all">All brands</option>
-            {availableBrands.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full min-w-0">
+            <select
+              value={selectedBrand}
+              onChange={(e) => onBrandChange(e.target.value)}
+              className="w-full appearance-none py-3 pl-3.5 pr-10 bg-white border border-[#E2E6EC] rounded-xl text-sm text-[#202A36] font-semibold focus:outline-none focus:ring-2 focus:ring-[#D7A94B] focus:border-transparent cursor-pointer"
+            >
+              <option value="all">All brands</option>
+              {availableBrands.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#667085]" />
+          </div>
         </div>
 
         {/* Enquire Now Gold Button */}
