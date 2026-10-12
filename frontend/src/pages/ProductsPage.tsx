@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PackageSearch, X, RefreshCw } from 'lucide-react';
 import type { Product } from '../types';
-import { PRODUCT_CATEGORIES, PRODUCTS as FALLBACK_PRODUCTS } from '../data/products';
+import { PRODUCT_CATEGORIES } from '../data/products';
 import { fetchPublicProducts } from '../services/api';
 import { CategorySidebar } from '../components/CategorySidebar';
 import { ProductSearchToolbar } from '../components/ProductSearchToolbar';
@@ -15,6 +15,7 @@ export const ProductsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || 'all');
 
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [liveProducts, setLiveProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +26,20 @@ export const ProductsPage: React.FC = () => {
     setSelectedBrand(searchParams.get('brand') || 'all');
   }, [searchParams]);
 
-  // Fetch products live from backend with fallback
+  // Fetch all products for category counts
+  useEffect(() => {
+    async function loadAllProducts() {
+      try {
+        const data = await fetchPublicProducts();
+        setAllProducts(data);
+      } catch (err) {
+        console.warn('Failed to fetch all products from backend:', err);
+      }
+    }
+    loadAllProducts();
+  }, []);
+
+  // Fetch filtered products live from backend API
   useEffect(() => {
     let isMounted = true;
     async function loadBackendProducts() {
@@ -40,28 +54,9 @@ export const ProductsPage: React.FC = () => {
           setLiveProducts(data);
         }
       } catch (err) {
-        console.warn('Backend API unreachable, using static catalogue fallback:', err);
+        console.warn('Backend API error:', err);
         if (isMounted) {
-          // Filter fallback static products
-          let list = FALLBACK_PRODUCTS as Product[];
-          if (selectedCategory !== 'all') {
-            const cat = PRODUCT_CATEGORIES.find(c => c.slug === selectedCategory || c.id === selectedCategory);
-            if (cat) list = list.filter(p => p.categoryId === cat.id);
-          }
-          if (selectedBrand !== 'all') {
-            list = list.filter(p => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
-          }
-          if (searchQuery.trim() !== '') {
-            const q = searchQuery.toLowerCase().trim();
-            list = list.filter(
-              p =>
-                p.name.toLowerCase().includes(q) ||
-                p.category.toLowerCase().includes(q) ||
-                (p.brand && p.brand.toLowerCase().includes(q)) ||
-                p.shortDescription.toLowerCase().includes(q)
-            );
-          }
-          setLiveProducts(list);
+          setLiveProducts([]);
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -74,17 +69,14 @@ export const ProductsPage: React.FC = () => {
     };
   }, [searchQuery, selectedCategory, selectedBrand]);
 
-  // Extract all unique brands available
+  // Extract all unique brands available in the database
   const availableBrands = useMemo(() => {
     const brandsSet = new Set<string>();
-    FALLBACK_PRODUCTS.forEach((p) => {
-      if (p.brand) brandsSet.add(p.brand);
-    });
-    liveProducts.forEach((p) => {
-      if (p.brand) brandsSet.add(p.brand);
+    allProducts.forEach((p) => {
+      if (p.brand && p.brand !== 'Unspecified') brandsSet.add(p.brand);
     });
     return Array.from(brandsSet);
-  }, [liveProducts]);
+  }, [allProducts]);
 
   const updateFilters = (cat: string, brand: string, search: string) => {
     const params: Record<string, string> = {};
@@ -171,7 +163,7 @@ export const ProductsPage: React.FC = () => {
                 : 'bg-white text-[#202A36] border border-slate-200'
             }`}
           >
-            All Products ({liveProducts.length})
+            All Products ({allProducts.length})
           </button>
           {PRODUCT_CATEGORIES.map((cat) => {
             const active = selectedCategory === cat.slug || selectedCategory === cat.id;
@@ -198,6 +190,7 @@ export const ProductsPage: React.FC = () => {
             <CategorySidebar
               selectedCategory={selectedCategory}
               onSelectCategory={handleCategorySelect}
+              products={allProducts}
             />
           </div>
 
@@ -229,7 +222,7 @@ export const ProductsPage: React.FC = () => {
             {/* Product Cards Grid */}
             {loading ? (
               <div className="py-16 text-center text-slate-500 font-semibold text-sm">
-                Fetching catalogue items...
+                Fetching catalogue items from database...
               </div>
             ) : liveProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

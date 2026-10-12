@@ -1,23 +1,28 @@
 import React from 'react';
 import { Grid, MessageSquare } from 'lucide-react';
-import { PRODUCT_CATEGORIES, PRODUCTS, getWhatsAppEnquiryUrl } from '../data/products';
+import { PRODUCT_CATEGORIES, getWhatsAppEnquiryUrl } from '../data/products';
+import type { Product } from '../types';
 
 interface CategorySidebarProps {
   selectedCategory: string;
   onSelectCategory: (categorySlug: string) => void;
+  products?: Product[];
 }
 
 export const CategorySidebar: React.FC<CategorySidebarProps> = ({
   selectedCategory,
   onSelectCategory,
+  products = []
 }) => {
 
-  // Calculate dynamic product counts for each category based on actual data
+  // Calculate dynamic product counts from live products list
   const getCategoryCount = (slug: string) => {
-    if (slug === 'all') return PRODUCTS.length;
+    if (slug === 'all') return products.length;
     const catObj = PRODUCT_CATEGORIES.find(c => c.slug === slug || c.id === slug);
     if (!catObj) return 0;
-    return PRODUCTS.filter(p => p.categoryId === catObj.id).length;
+    return products.filter(
+      p => p.categoryId === catObj.id || p.categoryId === catObj.slug || p.category === catObj.name
+    ).length;
   };
 
   const categoriesList = [

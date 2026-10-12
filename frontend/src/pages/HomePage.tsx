@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   MapPin, 
@@ -13,13 +13,45 @@ import {
 import { 
   BUSINESS_INFO, 
   PRODUCT_CATEGORIES, 
-  PRODUCTS, 
   getWhatsAppEnquiryUrl 
 } from '../data/products';
+import { fetchPublicProducts } from '../services/api';
+import type { Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
 
 export const HomePage: React.FC = () => {
-  const featuredProducts = PRODUCTS.filter(p => p.isPopular).slice(0, 6);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadFeatured() {
+      try {
+        const data = await fetchPublicProducts();
+        const popular = data.filter((p) => p.isPopular);
+        setFeaturedProducts(popular.length > 0 ? popular.slice(0, 6) : data.slice(0, 6));
+      } catch (err) {
+        console.warn('Failed to load featured products from backend:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadFeatured();
+  }, []);
+
+  const verifiedFeaturedBrands = [
+    { name: "Amman Try Steel", logo: "/images/logos/amman-try.svg" },
+    { name: "Viki TMT", logo: "/images/logos/viki-tmt.png" },
+    { name: "UltraTech Cement", logo: "/images/logos/ultratech.jpg" },
+    { name: "Birla Opus", logo: "/images/logos/birla-opus.png" },
+    { name: "Asian Paints", logo: "/images/logos/asian-paints.svg" },
+    { name: "Bosch", logo: "/images/logos/bosch.svg" },
+    { name: "Makita", logo: "/images/logos/makita.svg" },
+    { name: "Everest", logo: "/images/logos/everest.png" },
+    { name: "Tata", logo: "/images/logos/tata.svg" },
+    { name: "JSW", logo: "/images/logos/jsw.png" },
+    { name: "Cubecrete", logo: "/images/logos/cubecrete.png" },
+    { name: "Johnson Pedder", logo: "/images/logos/johnson-pedder.png" }
+  ];
 
   return (
     <div className="font-sans bg-[#F5F6F8]">
@@ -30,10 +62,10 @@ export const HomePage: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <img
             src="/images/hero.jpg"
-            alt="Plumbing pipes and building materials warehouse"
+            alt="Steel, pipes, cement and building materials warehouse"
             className="w-full h-full object-cover object-right md:object-center opacity-85 scale-105"
           />
-          {/* Dark Navy Gradient Overlay matching Figma design */}
+          {/* Dark Navy Gradient Overlay matching design */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B1728] via-[#0B1728]/95 to-[#0B1728]/35 md:to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B1728] via-transparent to-transparent opacity-80" />
         </div>
@@ -45,7 +77,7 @@ export const HomePage: React.FC = () => {
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 bg-[#D7A94B]/20 border border-[#D7A94B]/40 text-[#D7A94B] px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-bold uppercase tracking-wider mb-6 backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-[#D7A94B] animate-pulse" />
-              <span>BUILDING MATERIALS IN PASUPATHIKOIL</span>
+              <span>BUILDING MATERIALS IN PASUPATHI KOVIL</span>
             </div>
 
             {/* Main Heading */}
@@ -55,7 +87,7 @@ export const HomePage: React.FC = () => {
 
             {/* Supporting Paragraph */}
             <p className="mt-5 text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-xl">
-              Explore plumbing pipes, water tanks, taps, cement, steel and essential materials for your next project—all from one trusted local shop.
+              Explore steel rebars, cement, MS pipes, paints, power tools, roofing sheets, and building materials for your project—all from one trusted local supplier in Pasupathi Kovil.
             </p>
 
             {/* Buttons */}
@@ -88,7 +120,7 @@ export const HomePage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="hover:text-[#D7A94B] hover:underline transition-colors flex items-center gap-1"
               >
-                <span>Conveniently located in Ayyampettai, Pasupathikoil</span>
+                <span>Conveniently located at 20 RamaGuru Nagar, Pasupathi Kovil</span>
                 <ChevronRight className="w-4 h-4 text-[#D7A94B]" />
               </a>
             </div>
@@ -97,38 +129,32 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* VERIFIED BRANDS STRIP */}
-      <section className="bg-white border-b border-slate-200 py-8 px-4 sm:px-6 lg:px-8">
+      {/* VERIFIED BRANDS STRIP WITH AUTHENTIC LOGOS */}
+      <section className="bg-white border-b border-slate-200 py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">
-            Authorized Local Supplier for Leading Construction Brands
+            Authorized Local Dealer & Supplier for Verified Leading Brands
           </p>
-          <div className="flex flex-wrap items-center justify-around gap-6 md:gap-10 opacity-90">
-            <div className="flex items-center gap-2 text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
-              <ShieldCheck className="w-6 h-6 text-[#14263D]" />
-              <span>ASTRAL PIPES</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
-              <ShieldCheck className="w-6 h-6 text-[#14263D]" />
-              <span>ASHIRVAD</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
-              <ShieldCheck className="w-6 h-6 text-[#14263D]" />
-              <span>VECTUS TANKS</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
-              <ShieldCheck className="w-6 h-6 text-[#14263D]" />
-              <span>ULTRATECH CEMENT</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
-              <ShieldCheck className="w-6 h-6 text-[#14263D]" />
-              <span>AMMAN TMT STEEL</span>
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center">
+            {verifiedFeaturedBrands.map((b) => (
+              <div 
+                key={b.name} 
+                className="bg-slate-50 hover:bg-white p-3 rounded-xl border border-slate-200 shadow-xs hover:shadow-sm transition-all flex flex-col items-center justify-center h-16 group"
+                title={b.name}
+              >
+                <img
+                  src={b.logo}
+                  alt={`${b.name} official brand logo`}
+                  className="max-h-8 max-w-[105px] object-contain filter group-hover:scale-105 transition-transform"
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CATEGORIES SHOWCASE GRID */}
+      {/* CATEGORIES SHOWCASE GRID (ALL 13 CATEGORIES) */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
@@ -143,12 +169,12 @@ export const HomePage: React.FC = () => {
             to="/products"
             className="inline-flex items-center gap-2 text-[#14263D] hover:text-[#D7A94B] font-bold text-sm transition-colors group"
           >
-            <span>View All Categories</span>
+            <span>View All 13 Categories</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {PRODUCT_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
@@ -164,15 +190,15 @@ export const HomePage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B1728]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4 text-white">
-                  <span className="text-xs font-bold text-[#D7A94B] uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-[#D7A94B] uppercase tracking-wider line-clamp-1">
                     {cat.featuredBrands.join(" • ")}
                   </span>
-                  <h3 className="text-lg font-bold drop-shadow-sm">{cat.name}</h3>
+                  <h3 className="text-base font-bold drop-shadow-sm">{cat.name}</h3>
                 </div>
               </div>
 
-              <div className="p-5 flex flex-col flex-grow justify-between">
-                <p className="text-slate-600 text-sm leading-relaxed mb-4">
+              <div className="p-4 flex flex-col flex-grow justify-between">
+                <p className="text-slate-600 text-xs leading-relaxed mb-3 line-clamp-2">
                   {cat.description}
                 </p>
                 <div className="flex items-center text-xs font-bold text-[#14263D] group-hover:text-[#D7A94B] transition-colors gap-1">
@@ -196,7 +222,7 @@ export const HomePage: React.FC = () => {
               Why Builders & Homeowners Trust K.S. Steel Corporation
             </h2>
             <p className="text-slate-300 mt-3 text-sm sm:text-base">
-              Serving Pasupathikoil and surrounding regions with verified construction materials and direct pricing.
+              Serving Pasupathi Kovil and Thanjavur District with genuine construction materials, authentic brands, and direct shop prices.
             </p>
           </div>
 
@@ -207,7 +233,7 @@ export const HomePage: React.FC = () => {
               </div>
               <h3 className="font-bold text-lg text-white">100% Genuine Brands</h3>
               <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                Direct authorized sourcing for Astral, Ashirvad, Vectus, UltraTech, and Amman Steel.
+                Direct authorized sourcing for Amman Try Steel, Viki TMT, UltraTech Cement, Birla Opus, Asian Paints, Bosch, and Tata.
               </p>
             </div>
 
@@ -217,7 +243,7 @@ export const HomePage: React.FC = () => {
               </div>
               <h3 className="font-bold text-lg text-white">Direct Store Prices</h3>
               <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                Transparent local pricing for retail customers, contractor accounts, and bulk project orders.
+                Competitive local retail and contractor pricing for ongoing house construction and civil projects.
               </p>
             </div>
 
@@ -227,7 +253,7 @@ export const HomePage: React.FC = () => {
               </div>
               <h3 className="font-bold text-lg text-white">Prompt Site Delivery</h3>
               <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                Fast supply delivery directly to your house construction or agricultural site in Pasupathikoil.
+                Reliable supply transport directly to building sites across Pasupathi Kovil and Thanjavur District.
               </p>
             </div>
 
@@ -237,7 +263,7 @@ export const HomePage: React.FC = () => {
               </div>
               <h3 className="font-bold text-lg text-white">Expert Guidance</h3>
               <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                Get practical technical assistance on pipe sizing, tank capacities, and structural steel grades.
+                Knowledgeable assistance on steel reinforcement grades, MS pipe profiles, cement types, and roofing profiles.
               </p>
             </div>
           </div>
@@ -264,11 +290,21 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-12 text-center text-slate-500 font-semibold text-sm">
+            Loading supplies from database...
+          </div>
+        ) : featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id || (product as any)._id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-slate-500 text-sm">
+            No featured products found.
+          </div>
+        )}
       </section>
 
       {/* STORE LOCATION CTA BANNER */}
@@ -276,13 +312,13 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
             <span className="text-[#D7A94B] font-bold text-xs uppercase tracking-widest">
-              VISIT OUR PASUPATHIKOIL STORE
+              VISIT OUR PASUPATHI KOVIL STORE
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#14263D] mt-2">
               K.S. Steel Corporation
             </h2>
             <p className="text-slate-600 mt-4 leading-relaxed">
-              We welcome local home builders, contractors, plumbers, and farmers to visit our store in Ayyampettai, Pasupathikoil. Inspect product samples, check stock availability, and get direct quotes.
+              We welcome local home builders, contractors, fabricators, and homeowners to visit our store in Pasupathi Kovil. Inspect product samples, check stock availability, and get direct quotes.
             </p>
 
             <div className="mt-6 space-y-3 text-sm text-slate-700">
@@ -292,7 +328,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-5 h-5 text-[#25D366] shrink-0" />
-                <span className="font-semibold">WhatsApp: +91 98429 28278</span>
+                <span className="font-semibold">WhatsApp: {BUSINESS_INFO.whatsappNumber}</span>
               </div>
             </div>
 

@@ -11,10 +11,10 @@ export const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Need Quality Building Materials in Pasupathikoil?
+              Need Quality Building Materials in Pasupathi Kovil?
             </h3>
             <p className="text-slate-300 mt-2 text-sm sm:text-base">
-              Get genuine pipes, water tanks, taps, cement, and TMT steel rebars directly from our local store.
+              Get genuine steel, cement, pipes, paints, power tools, and construction building supplies directly from our local store.
             </p>
           </div>
           <div className="flex flex-wrap gap-4 shrink-0">
@@ -52,7 +52,7 @@ export const Footer: React.FC = () => {
             </span>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">
-            Your trusted local dealer in Pasupathikoil for plumbing pipes, tanks, taps, cement, TMT steel rebars, and essential building supplies.
+            Your trusted local dealer in Pasupathi Kovil for steel rebars, cement, MS pipes, paints, power tools, roofing sheets, and essential building supplies.
           </p>
           <div className="pt-2">
             <a
@@ -126,16 +126,21 @@ export const Footer: React.FC = () => {
               <MapPin className="w-5 h-5 text-[#D7A94B] shrink-0 mt-0.5" />
               <span>{BUSINESS_INFO.address}</span>
             </li>
-            <li className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-[#D7A94B] shrink-0" />
-              <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="hover:text-[#D7A94B]">
-                {BUSINESS_INFO.phone}
-              </a>
+            <li className="flex items-start gap-3">
+              <Phone className="w-5 h-5 text-[#D7A94B] shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-0.5">
+                <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="hover:text-[#D7A94B]">
+                  {BUSINESS_INFO.phone}
+                </a>
+                <a href={`tel:${BUSINESS_INFO.phoneSecondaryRaw}`} className="hover:text-[#D7A94B]">
+                  {BUSINESS_INFO.phoneSecondary}
+                </a>
+              </div>
             </li>
             <li className="flex items-center gap-3">
               <MessageSquare className="w-5 h-5 text-[#25D366] shrink-0" />
               <a href={BUSINESS_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366]">
-                WhatsApp: +91 98429 28278
+                WhatsApp: {BUSINESS_INFO.whatsappNumber}
               </a>
             </li>
           </ul>
@@ -146,7 +151,7 @@ export const Footer: React.FC = () => {
       <div className="bg-[#070E18] py-4 px-4 text-center text-xs text-slate-500 border-t border-slate-800/80">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
           <span>&copy; {new Date().getFullYear()} K.S. Steel Corporation. All rights reserved.</span>
-          <span>Ayyampettai, Pasupathikoil, Tamil Nadu</span>
+          <span>{BUSINESS_INFO.locationShort}</span>
         </div>
       </div>
     </footer>

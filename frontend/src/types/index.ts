@@ -4,12 +4,15 @@ export interface Product {
   slug?: string;
   name: string;
   brand?: string;
+  brandLogo?: string;
   category: string;
   categoryId: string;
   image: string;
+  imageAlt?: string;
   gallery?: string[];
   shortDescription: string;
-  fullDescription: string;
+  fullDescription?: string;
+  description?: string;
   specifications?: Record<string, string>;
   isActive?: boolean;
   isPopular?: boolean;

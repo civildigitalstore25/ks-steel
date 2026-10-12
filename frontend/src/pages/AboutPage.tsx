@@ -15,10 +15,10 @@ export const AboutPage: React.FC = () => {
               ABOUT K.S. STEEL CORPORATION
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-2 leading-tight">
-              Your Trusted Local Supplier for Construction & Plumbing Materials
+              Your Trusted Supplier for Construction & Building Materials in Pasupathi Kovil
             </h1>
             <p className="text-slate-300 mt-4 text-base sm:text-lg leading-relaxed">
-              Located in Pasupathikoil, Tamil Nadu, K.S. Steel Corporation supplies contractors, builders, plumbers, and homeowners with high-quality plumbing pipes, water storage tanks, CP bathroom fittings, UltraTech cement, and TMT reinforcement steel rebars.
+              Located in Pasupathi Kovil, Tamil Nadu, K.S. Steel Corporation supplies contractors, builders, fabricators, and homeowners with high-quality steel rebars, cement, MS pipes, paints, power tools, roofing sheets, motor pumps, bathware, electrical, and construction materials.
             </p>
           </div>
           <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-10 pointer-events-none hidden lg:block bg-gradient-to-l from-white to-transparent" />
@@ -31,25 +31,29 @@ export const AboutPage: React.FC = () => {
               Direct Sourcing from Leading Brands
             </h2>
             <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-              At K.S. Steel Corporation, we prioritize product quality and customer satisfaction. We stock top-rated building supplies from recognized manufacturers to ensure every building project in Pasupathikoil and surrounding areas achieves lasting structural durability.
+              At K.S. Steel Corporation, we prioritize authentic product quality, structural reliability, and customer satisfaction. We stock verified building materials from leading manufacturers to ensure every building project in Pasupathi Kovil and surrounding regions achieves lasting durability.
             </p>
 
             <ul className="space-y-3 pt-2">
               <li className="flex items-start gap-3 text-slate-800 text-sm font-semibold">
                 <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
-                <span>Authorized Astral & Ashirvad plumbing and borewell piping systems</span>
+                <span>Amman Try Steel & Viki TMT Fe 550D high-ductility structural rebars</span>
               </li>
               <li className="flex items-start gap-3 text-slate-800 text-sm font-semibold">
                 <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
-                <span>Multi-layer UV-stabilized Vectus overhead water tanks</span>
+                <span>UltraTech Cement & UltraTech Building Solutions specialized cement</span>
               </li>
               <li className="flex items-start gap-3 text-slate-800 text-sm font-semibold">
                 <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
-                <span>UltraTech OPC & PPC construction grade cement</span>
+                <span>Mild steel square pipes, round pipes, flat sections, and L-angles</span>
               </li>
               <li className="flex items-start gap-3 text-slate-800 text-sm font-semibold">
                 <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
-                <span>Amman TMT Fe 550D high-ductility structural rebars</span>
+                <span>Birla Opus & Asian Paints architectural interior and exterior paints</span>
+              </li>
+              <li className="flex items-start gap-3 text-slate-800 text-sm font-semibold">
+                <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
+                <span>Bosch & Makita power tools, Everest, Tata & JSW roofing sheets</span>
               </li>
             </ul>
           </div>
@@ -57,29 +61,29 @@ export const AboutPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
               <img
-                src="/images/hero.jpg"
-                alt="Construction pipes warehouse"
+                src="/images/products/steel-tmt-bars.jpg"
+                alt="Amman Try and Viki TMT Steel Rebars"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
               <img
-                src="/images/steel.jpg"
-                alt="Amman TMT Steel Rebars"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
-              <img
-                src="/images/water-tank.jpg"
-                alt="Vectus Water Storage Tanks"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
-              <img
-                src="/images/cement.jpg"
+                src="/images/products/cement-bags.jpg"
                 alt="UltraTech Cement Bags"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
+              <img
+                src="/images/products/ms-square-pipes.jpg"
+                alt="Mild Steel Square Pipes"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="rounded-xl overflow-hidden shadow-sm aspect-4/3 bg-slate-200 border border-slate-200">
+              <img
+                src="/images/products/roofing-sheets.jpg"
+                alt="Roofing Sheets Stack"
                 className="w-full h-full object-cover"
               />
             </div>

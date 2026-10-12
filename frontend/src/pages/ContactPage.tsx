@@ -59,7 +59,7 @@ Enquiry Details:
 
 Please share pricing and stock availability.`;
 
-    const waUrl = `https://wa.me/919842928278?text=${encodeURIComponent(messageText)}`;
+    const waUrl = `https://wa.me/918122126054?text=${encodeURIComponent(messageText)}`;
     
     // Open WhatsApp with prefilled message
     window.open(waUrl, '_blank');
@@ -79,7 +79,7 @@ Please share pricing and stock availability.`;
             Contact K.S. Steel Corporation
           </h1>
           <p className="text-slate-600 mt-2 max-w-2xl text-sm sm:text-base">
-            Have a question about pipe dimensions, tank sizes, cement availability, or TMT steel prices? Call or send us an enquiry directly.
+            Have a question about TMT steel, cement, MS pipes, paints, power tools, roofing sheets, or building materials? Call or send us an enquiry directly.
           </p>
         </div>
 
@@ -94,15 +94,37 @@ Please share pricing and stock availability.`;
               </div>
               <h3 className="font-bold text-lg text-[#14263D]">Call Us Directly</h3>
               <p className="text-slate-600 text-sm mt-1">Speak directly with our store team for instant product pricing.</p>
-              <p className="font-extrabold text-lg text-[#14263D] mt-4">{BUSINESS_INFO.phone}</p>
+              <div className="mt-4 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500">Primary:</span>
+                  <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="font-extrabold text-base text-[#14263D] hover:text-[#D7A94B] transition-colors">
+                    +91 98429 28278
+                  </a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500">Secondary:</span>
+                  <a href={`tel:${BUSINESS_INFO.phoneSecondaryRaw}`} className="font-extrabold text-base text-[#14263D] hover:text-[#D7A94B] transition-colors">
+                    +91 81221 26054
+                  </a>
+                </div>
+              </div>
             </div>
-            <a
-              href={`tel:${BUSINESS_INFO.phoneRaw}`}
-              className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-[#14263D] hover:bg-[#0B1728] text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-colors text-sm"
-            >
-              <Phone className="w-4 h-4 text-[#D7A94B]" />
-              <span>Call Now</span>
-            </a>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <a
+                href={`tel:${BUSINESS_INFO.phoneRaw}`}
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-[#14263D] hover:bg-[#0B1728] text-white font-bold py-2.5 px-2 rounded-lg shadow-sm transition-colors text-xs text-center"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#D7A94B]" />
+                <span>98429 28278</span>
+              </a>
+              <a
+                href={`tel:${BUSINESS_INFO.phoneSecondaryRaw}`}
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-[#14263D] hover:bg-[#0B1728] text-white font-bold py-2.5 px-2 rounded-lg shadow-sm transition-colors text-xs text-center"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#D7A94B]" />
+                <span>81221 26054</span>
+              </a>
+            </div>
           </div>
 
           {/* Card 2: WhatsApp */}
@@ -112,8 +134,8 @@ Please share pricing and stock availability.`;
                 <MessageSquare className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-lg text-[#14263D]">WhatsApp Enquiry</h3>
-              <p className="text-slate-600 text-sm mt-1">Send product photos or item lists for quick estimates.</p>
-              <p className="font-extrabold text-lg text-[#25D366] mt-4">+91 98429 28278</p>
+              <p className="text-slate-600 text-sm mt-1">Send product requirements, item lists or site photos directly on WhatsApp.</p>
+              <p className="font-extrabold text-lg text-[#25D366] mt-4">+91 81221 26054</p>
             </div>
             <a
               href={getWhatsAppEnquiryUrl()}

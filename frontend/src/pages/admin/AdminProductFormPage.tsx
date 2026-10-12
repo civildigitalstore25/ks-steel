@@ -6,7 +6,7 @@ import {
   Plus, 
   Trash2, 
   AlertCircle, 
-  CheckCircle2 
+  CheckCircle2
 } from 'lucide-react';
 import { 
   fetchAdminProductById, 
@@ -14,16 +14,39 @@ import {
   updateAdminProduct, 
   uploadProductImage 
 } from '../../services/api';
+import { BRAND_LOGOS } from '../../data/products';
 
 const CATEGORY_OPTIONS = [
-  "Plumbing Pipes and Fittings",
-  "Borewell Pipes",
-  "Water Tanks",
-  "Bathroom and Plumbing Taps",
+  "Steel",
   "Cement",
-  "Steel and Reinforcement Materials",
-  "Other Building Materials"
+  "MS Pipe",
+  "Paint",
+  "Power Tools",
+  "Roofing Sheets",
+  "Motor Pumps",
+  "Bathware and Fittings",
+  "Electrical",
+  "Hardware",
+  "AAC Blocks",
+  "Kadappa Stone",
+  "Fencing"
 ];
+
+const CATEGORY_BRAND_OPTIONS: Record<string, string[]> = {
+  "Steel": ["Amman Try Steel", "Viki TMT"],
+  "Cement": ["UltraTech Cement", "UltraTech Building Solutions"],
+  "MS Pipe": ["Square Pipes", "Round Pipes", "Flat Sections", "L-Angles", "Unbranded / Generic"],
+  "Paint": ["Birla Opus", "Asian Paints", "I Max Paint"],
+  "Power Tools": ["Bosch", "Makita", "Ferm", "Caltex"],
+  "Roofing Sheets": ["Everest", "Tata", "JSW"],
+  "Motor Pumps": ["CG", "V-Guard", "Laxmi"],
+  "Bathware and Fittings": ["Neycer", "Johnson Pedder", "Parryware"],
+  "Electrical": ["Fybros", "Kundan", "HiFi", "Eveready", "Sturlite"],
+  "Hardware": ["Unbranded / Generic"],
+  "AAC Blocks": ["Cubecrete"],
+  "Kadappa Stone": ["Unbranded / Generic"],
+  "Fencing": ["Tata", "Other manufacturers"]
+};
 
 export const AdminProductFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,24 +55,29 @@ export const AdminProductFormPage: React.FC = () => {
 
   const [formData, setFormData] = useState({
     name: '',
-    brand: '',
     category: CATEGORY_OPTIONS[0],
+    brand: 'Unbranded / Generic',
+    brandLogo: '',
     shortDescription: '',
     description: '',
-    image: '/images/pipes.jpg',
+    image: '/images/products/steel-tmt-bars.jpg',
+    imageAlt: '',
     isActive: true,
     isPopular: false,
     isPlaceholder: false,
     verificationNote: ''
   });
 
+  const [isCustomBrand, setIsCustomBrand] = useState(false);
+  const [customBrandName, setCustomBrandName] = useState('');
+
   const [specifications, setSpecifications] = useState<Array<{ key: string; value: string }>>([
     { key: 'Material', value: '' },
-    { key: 'Available Sizes', value: '' }
+    { key: 'Availability', value: 'In Store - Pasupathi Kovil' }
   ]);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('/images/pipes.jpg');
+  const [imagePreview, setImagePreview] = useState<string>('/images/products/steel-tmt-bars.jpg');
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(isEditMode);
   const [error, setError] = useState('');
@@ -61,19 +89,32 @@ export const AdminProductFormPage: React.FC = () => {
     async function loadProduct() {
       try {
         const prod = await fetchAdminProductById(id!);
+        const cat = prod.category || CATEGORY_OPTIONS[0];
+        const knownBrands = CATEGORY_BRAND_OPTIONS[cat] || [];
+        const isGeneric = !prod.brand || prod.brand === 'Unspecified' || prod.brand === 'Unbranded / Generic';
+        const isKnown = knownBrands.includes(prod.brand || '');
+
         setFormData({
           name: prod.name || '',
-          brand: prod.brand || '',
-          category: prod.category || CATEGORY_OPTIONS[0],
+          category: cat,
+          brand: isGeneric ? 'Unbranded / Generic' : (prod.brand || 'Unbranded / Generic'),
+          brandLogo: prod.brandLogo || (prod.brand ? BRAND_LOGOS[prod.brand] : '') || '',
           shortDescription: prod.shortDescription || '',
-          description: prod.fullDescription || prod.shortDescription || '',
-          image: prod.image || '/images/pipes.jpg',
+          description: prod.fullDescription || prod.description || prod.shortDescription || '',
+          image: prod.image || '/images/products/steel-tmt-bars.jpg',
+          imageAlt: prod.imageAlt || '',
           isActive: prod.isActive !== false,
           isPopular: Boolean(prod.isPopular),
           isPlaceholder: Boolean(prod.isPlaceholder),
           verificationNote: prod.verificationNote || ''
         });
-        setImagePreview(prod.image || '/images/pipes.jpg');
+
+        if (!isGeneric && !isKnown) {
+          setIsCustomBrand(true);
+          setCustomBrandName(prod.brand || '');
+        }
+
+        setImagePreview(prod.image || '/images/products/steel-tmt-bars.jpg');
 
         if (prod.specifications) {
           const specsArr = Object.entries(prod.specifications).map(([key, value]) => ({
@@ -90,6 +131,42 @@ export const AdminProductFormPage: React.FC = () => {
     }
     loadProduct();
   }, [id]);
+
+  // When category changes, update suggested brands
+  const handleCategoryChange = (newCategory: string) => {
+    const brandOptions = CATEGORY_BRAND_OPTIONS[newCategory] || ["Unbranded / Generic"];
+    const defaultBrand = brandOptions[0] || "Unbranded / Generic";
+    setFormData(prev => ({
+      ...prev,
+      category: newCategory,
+      brand: defaultBrand,
+      brandLogo: BRAND_LOGOS[defaultBrand] || ''
+    }));
+    setIsCustomBrand(false);
+    setCustomBrandName('');
+  };
+
+  const handleBrandSelectChange = (val: string) => {
+    if (val === '__custom__') {
+      setIsCustomBrand(true);
+      setFormData(prev => ({ ...prev, brand: customBrandName || 'Custom Brand', brandLogo: '' }));
+    } else {
+      setIsCustomBrand(false);
+      setFormData(prev => ({
+        ...prev,
+        brand: val,
+        brandLogo: BRAND_LOGOS[val] || prev.brandLogo || ''
+      }));
+    }
+  };
+
+  const handleCustomBrandNameChange = (val: string) => {
+    setCustomBrandName(val);
+    setFormData(prev => ({
+      ...prev,
+      brand: val.trim() || 'Custom Brand'
+    }));
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -162,13 +239,19 @@ export const AdminProductFormPage: React.FC = () => {
         }
       });
 
+      const effectiveBrand = isCustomBrand
+        ? (customBrandName.trim() || 'Unbranded / Generic')
+        : formData.brand;
+
       const payload = {
         name: formData.name.trim(),
-        brand: formData.brand.trim() || 'Unspecified',
+        brand: effectiveBrand,
+        brandLogo: formData.brandLogo.trim() || (BRAND_LOGOS[effectiveBrand] || undefined),
         category: formData.category,
         shortDescription: formData.shortDescription.trim() || formData.description.slice(0, 120),
         description: formData.description.trim() || formData.name,
         image: finalImageUrl,
+        imageAlt: formData.imageAlt.trim() || `${formData.name} product photograph`,
         specifications: specsObj,
         isActive: formData.isActive,
         isPopular: formData.isPopular,
@@ -178,10 +261,10 @@ export const AdminProductFormPage: React.FC = () => {
 
       if (isEditMode && id) {
         await updateAdminProduct(id, payload);
-        setSuccess('Product updated successfully!');
+        setSuccess('Product updated successfully in MongoDB database!');
       } else {
         await createAdminProduct(payload);
-        setSuccess('Product created successfully!');
+        setSuccess('Product created successfully in MongoDB database!');
       }
 
       setTimeout(() => {
@@ -197,10 +280,13 @@ export const AdminProductFormPage: React.FC = () => {
   if (fetching) {
     return (
       <div className="py-20 text-center text-slate-500 text-sm font-semibold">
-        Loading product details...
+        Loading product details from database...
       </div>
     );
   }
+
+  const currentCategoryBrands = CATEGORY_BRAND_OPTIONS[formData.category] || ["Unbranded / Generic"];
+  const currentLogo = formData.brandLogo || BRAND_LOGOS[formData.brand];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto font-sans pb-12">
@@ -223,7 +309,7 @@ export const AdminProductFormPage: React.FC = () => {
             {isEditMode ? 'Edit Product Entry' : 'Create New Product'}
           </h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Fill in product specifications, image URL or file upload, and catalogue details.
+            Manage product catalogue information across all 13 official categories with authentic brand logos.
           </p>
         </div>
       </div>
@@ -249,7 +335,7 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Basic Information */}
         <div className="space-y-4">
           <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#14263D] border-b border-slate-100 pb-2">
-            1. Basic Information
+            1. Basic Information & Categorisation
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -261,7 +347,7 @@ export const AdminProductFormPage: React.FC = () => {
                 type="text"
                 name="name"
                 required
-                placeholder="e.g. Astral CPVC Pro Pipe"
+                placeholder="e.g. Amman Try Fe 550D TMT Rebars"
                 value={formData.name}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
@@ -270,13 +356,13 @@ export const AdminProductFormPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
-                Category *
+                Category (13 Categories) *
               </label>
               <select
                 name="category"
                 value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] font-medium focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] font-semibold focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
               >
                 {CATEGORY_OPTIONS.map((cat) => (
                   <option key={cat} value={cat}>
@@ -290,31 +376,80 @@ export const AdminProductFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
-                Brand (Optional)
+                Brand Selection ({formData.category})
               </label>
-              <input
-                type="text"
-                name="brand"
-                placeholder="e.g. Astral, Ashirvad, Vectus, UltraTech"
-                value={formData.brand}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
-              />
+              <select
+                value={isCustomBrand ? '__custom__' : formData.brand}
+                onChange={(e) => handleBrandSelectChange(e.target.value)}
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] font-medium focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+              >
+                <option value="Unbranded / Generic">Unbranded / Not specified</option>
+                {currentCategoryBrands.map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+                <option value="__custom__">+ Enter Custom / Unlisted Brand</option>
+              </select>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
-                Verification Note (Optional)
-              </label>
-              <input
-                type="text"
-                name="verificationNote"
-                placeholder="e.g. Brand spelling & model to be confirmed"
-                value={formData.verificationNote}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
-              />
+            {isCustomBrand ? (
+              <div>
+                <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
+                  Custom Brand Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter supplier or manufacturer name"
+                  value={customBrandName}
+                  onChange={(e) => handleCustomBrandNameChange(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+                />
+              </div>
+            ) : (
+              <div>
+                <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
+                  Brand Logo Reference / URL
+                </label>
+                <input
+                  type="text"
+                  name="brandLogo"
+                  placeholder="e.g. /images/logos/amman-try.svg"
+                  value={formData.brandLogo}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Brand Logo Visual Preview */}
+          {currentLogo && (
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Brand Logo:</span>
+              <div className="bg-white p-1.5 rounded-lg border border-slate-200 inline-flex items-center">
+                <img
+                  src={currentLogo}
+                  alt="Brand Logo Preview"
+                  className="h-6 max-w-[120px] object-contain"
+                />
+              </div>
+              <span className="text-xs text-slate-500">{formData.brand} verified logo</span>
             </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
+              Verification Note (Optional)
+            </label>
+            <input
+              type="text"
+              name="verificationNote"
+              placeholder="e.g. Verified official supplier / Brand model to be confirmed"
+              value={formData.verificationNote}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+            />
           </div>
         </div>
 
@@ -346,7 +481,7 @@ export const AdminProductFormPage: React.FC = () => {
               name="description"
               rows={4}
               required
-              placeholder="Detailed description of applications, temperature ratings, standards, etc."
+              placeholder="Detailed description of materials, specifications, and applications..."
               value={formData.description}
               onChange={handleInputChange}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
@@ -357,7 +492,7 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Image Management */}
         <div className="space-y-4 pt-2">
           <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#14263D] border-b border-slate-100 pb-2">
-            3. Product Image
+            3. Product Image & Accessibility
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -381,12 +516,26 @@ export const AdminProductFormPage: React.FC = () => {
                 <input
                   type="text"
                   name="image"
-                  placeholder="/images/pipes.jpg or http://..."
+                  placeholder="/images/products/steel-tmt-bars.jpg"
                   value={formData.image}
                   onChange={(e) => {
                     handleInputChange(e);
                     setImagePreview(e.target.value);
                   }}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
+                  Image Alt Text (SEO & Accessibility)
+                </label>
+                <input
+                  type="text"
+                  name="imageAlt"
+                  placeholder="e.g. Amman Try Fe 550D TMT reinforcement rebars bundle"
+                  value={formData.imageAlt}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
                 />
               </div>
@@ -396,7 +545,7 @@ export const AdminProductFormPage: React.FC = () => {
               <span className="text-xs font-bold text-slate-500 mb-2">Image Preview</span>
               <div className="w-full aspect-4/3 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
                 <img
-                  src={imagePreview || '/images/pipes.jpg'}
+                  src={imagePreview || '/images/products/steel-tmt-bars.jpg'}
                   alt="Preview"
                   className="w-full h-full object-cover"
                 />
@@ -405,43 +554,44 @@ export const AdminProductFormPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Technical Specifications */}
+        {/* Specifications */}
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#14263D]">
-              4. Key Specifications (Optional)
+              4. Product Specifications
             </h3>
             <button
               type="button"
               onClick={addSpecRow}
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#14263D] hover:text-[#D7A94B]"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#14263D] bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Specification</span>
+              <span>Add Field</span>
             </button>
           </div>
 
-          <div className="space-y-2">
-            {specifications.map((spec, idx) => (
-              <div key={idx} className="flex items-center gap-3">
+          <div className="space-y-3">
+            {specifications.map((spec, index) => (
+              <div key={index} className="flex items-center gap-3">
                 <input
                   type="text"
-                  placeholder="Feature (e.g. Material)"
+                  placeholder="Field (e.g. Grade, Size, Packaging)"
                   value={spec.key}
-                  onChange={(e) => handleSpecChange(idx, 'key', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-[#14263D]"
+                  onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
+                  className="w-1/2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
                 />
                 <input
                   type="text"
-                  placeholder="Value (e.g. Heavy Duty uPVC)"
+                  placeholder="Value (e.g. Fe 550D, 50kg Bag)"
                   value={spec.value}
-                  onChange={(e) => handleSpecChange(idx, 'value', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-[#14263D]"
+                  onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                  className="w-1/2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
                 />
                 <button
                   type="button"
-                  onClick={() => removeSpecRow(idx)}
-                  className="p-2 text-slate-400 hover:text-red-600"
+                  onClick={() => removeSpecRow(index)}
+                  className="p-2 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                  title="Remove Specification"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -452,52 +602,60 @@ export const AdminProductFormPage: React.FC = () => {
 
         {/* Status & Options */}
         <div className="space-y-4 pt-2 border-t border-slate-100">
-          <div className="flex flex-wrap gap-6">
-            <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-[#14263D]">
+          <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#14263D]">
+            5. Visibility & Status
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition-colors">
               <input
                 type="checkbox"
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-[#D7A94B] rounded focus:ring-[#D7A94B]"
+                className="w-4 h-4 text-[#14263D] rounded border-slate-300 focus:ring-[#D7A94B]"
               />
-              <span>Publicly Active (Visible on Products page)</span>
+              <div>
+                <span className="font-bold text-xs text-[#14263D] block">Active / Visible on Public Website</span>
+                <span className="text-[11px] text-slate-500">Uncheck to hide this product from public catalogue</span>
+              </div>
             </label>
 
-            <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-[#14263D]">
+            <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition-colors">
               <input
                 type="checkbox"
                 name="isPopular"
                 checked={formData.isPopular}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-[#D7A94B] rounded focus:ring-[#D7A94B]"
+                className="w-4 h-4 text-[#14263D] rounded border-slate-300 focus:ring-[#D7A94B]"
               />
-              <span>Feature on Homepage Popular Supplies</span>
+              <div>
+                <span className="font-bold text-xs text-[#14263D] block">Featured on Home Page</span>
+                <span className="text-[11px] text-slate-500">Display this product in popular building materials</span>
+              </div>
             </label>
           </div>
         </div>
 
-        {/* Form Action Buttons */}
-        <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+        {/* Submit Actions */}
+        <div className="pt-6 border-t border-slate-200 flex items-center justify-end gap-3">
           <Link
             to="/admin/products"
-            className="px-5 py-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
           >
             Cancel
           </Link>
-
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-extrabold text-sm py-3 px-7 rounded-xl shadow transition-all transform active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-extrabold text-sm py-2.5 px-6 rounded-xl shadow transition-all transform active:scale-95 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{loading ? 'Saving...' : isEditMode ? 'Update Product' : 'Create Product'}</span>
+            <span>{loading ? 'Saving to Database...' : isEditMode ? 'Update Product' : 'Create Product'}</span>
           </button>
         </div>
 
       </form>
-
     </div>
   );
 };

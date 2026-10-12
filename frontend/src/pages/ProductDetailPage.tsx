@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   MessageSquare, 
@@ -10,20 +10,66 @@ import {
   FileText,
   Tag
 } from 'lucide-react';
-import { PRODUCTS, BUSINESS_INFO, getWhatsAppEnquiryUrl } from '../data/products';
+import { BUSINESS_INFO, getWhatsAppEnquiryUrl, BRAND_LOGOS } from '../data/products';
+import { fetchPublicProductByIdOrSlug, fetchPublicProducts } from '../services/api';
+import type { Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const product = PRODUCTS.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!product) {
+  useEffect(() => {
+    if (!id) return;
+    async function loadData() {
+      setLoading(true);
+      setError(false);
+      try {
+        const prod = await fetchPublicProductByIdOrSlug(id!);
+        setProduct(prod);
+
+        // Fetch related products in same category
+        if (prod.categoryId || prod.category) {
+          const allCatProducts = await fetchPublicProducts({
+            category: prod.categoryId || prod.category
+          });
+          setRelatedProducts(
+            allCatProducts.filter(
+              (p) => p.id !== prod.id && (p as any)._id !== (prod as any)._id
+            ).slice(0, 3)
+          );
+        }
+      } catch (err) {
+        console.warn('Failed to load product details from backend API:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center p-4">
+        <div className="text-slate-500 font-semibold text-sm">
+          Loading product details from database...
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center max-w-md">
           <h2 className="text-2xl font-bold text-[#14263D]">Product Not Found</h2>
           <p className="text-slate-600 text-sm mt-2">
-            The requested product details could not be found or has been updated in our catalogue.
+            The requested product details could not be found or has been updated in our database.
           </p>
           <Link
             to="/products"
@@ -37,9 +83,8 @@ export const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const relatedProducts = PRODUCTS.filter(
-    (p) => p.categoryId === product.categoryId && p.id !== product.id
-  ).slice(0, 3);
+  const brandLogo = product.brandLogo || (product.brand ? BRAND_LOGOS[product.brand] : undefined);
+  const isGeneric = !product.brand || product.brand === 'Unspecified' || product.brand === 'Unbranded / Generic';
 
   return (
     <div className="font-sans bg-[#F5F6F8] min-h-screen py-10 px-4 sm:px-6 lg:px-8">
@@ -64,15 +109,27 @@ export const ProductDetailPage: React.FC = () => {
             <div className="lg:col-span-6 flex flex-col items-center">
               <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={product.image || '/images/products/steel-tmt-bars.jpg'}
+                  alt={product.imageAlt || product.name}
                   className="w-full h-full object-cover"
                 />
-                {product.brand && (
-                  <span className="absolute top-4 left-4 bg-[#14263D] text-[#D7A94B] font-extrabold text-xs px-3 py-1.5 rounded-md shadow-md flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-[#D7A94B]" />
-                    {product.brand}
-                  </span>
+                
+                {/* Brand Badge in Corner */}
+                {!isGeneric && (
+                  <div className="absolute top-4 left-4 bg-white/95 px-3 py-1.5 rounded-lg shadow-md border border-slate-200 flex items-center gap-2 backdrop-blur-sm">
+                    {brandLogo ? (
+                      <img
+                        src={brandLogo}
+                        alt={`${product.brand} logo`}
+                        className="h-5 max-w-[100px] object-contain"
+                      />
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4 text-[#D7A94B]" />
+                        <span className="text-xs font-bold text-[#14263D]">{product.brand}</span>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -80,11 +137,11 @@ export const ProductDetailPage: React.FC = () => {
               <div className="w-full mt-4 bg-slate-50 p-3.5 rounded-lg border border-slate-200 flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-700">
                 <span className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#D7A94B]" />
-                  <span>Available at Store in Pasupathikoil</span>
+                  <span>Available at Pasupathi Kovil Store</span>
                 </span>
                 <span className="text-[#25D366] font-bold flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>In Stock</span>
+                  <span>In Store Order</span>
                 </span>
               </div>
             </div>
@@ -101,12 +158,19 @@ export const ProductDetailPage: React.FC = () => {
                   {product.name}
                 </h1>
 
+                {!isGeneric && (
+                  <div className="mt-2 text-sm font-semibold text-slate-600 flex items-center gap-2">
+                    <span>Brand:</span>
+                    <span className="text-[#14263D] font-bold">{product.brand}</span>
+                  </div>
+                )}
+
                 <p className="text-slate-600 mt-4 leading-relaxed text-sm sm:text-base">
-                  {product.fullDescription}
+                  {product.fullDescription || product.description || product.shortDescription}
                 </p>
 
                 {/* Verified Specs Table */}
-                {product.specifications && (
+                {product.specifications && Object.keys(product.specifications).length > 0 && (
                   <div className="mt-6 border-t border-slate-100 pt-6">
                     <h3 className="text-sm font-bold text-[#14263D] uppercase tracking-wider mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-[#D7A94B]" />
@@ -121,7 +185,7 @@ export const ProductDetailPage: React.FC = () => {
                           } border-b border-slate-100 last:border-0`}
                         >
                           <span className="font-semibold text-slate-500">{key}</span>
-                          <span className="font-bold text-[#14263D] mt-0.5 sm:mt-0">{val}</span>
+                          <span className="font-bold text-[#14263D] mt-0.5 sm:mt-0">{String(val)}</span>
                         </div>
                       ))}
                     </div>
@@ -162,7 +226,7 @@ export const ProductDetailPage: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedProducts.map((rel) => (
-                <ProductCard key={rel.id} product={rel} />
+                <ProductCard key={rel.id || (rel as any)._id} product={rel} />
               ))}
             </div>
           </div>

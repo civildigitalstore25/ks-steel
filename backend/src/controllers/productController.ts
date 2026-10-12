@@ -178,10 +178,12 @@ export async function createProduct(req: Request, res: Response): Promise<void> 
     const {
       name,
       brand,
+      brandLogo,
       category,
       shortDescription,
       description,
       image,
+      imageAlt,
       gallery,
       specifications,
       isActive,
@@ -215,11 +217,13 @@ export async function createProduct(req: Request, res: Response): Promise<void> 
       slug,
       name: String(name).trim(),
       brand: brand ? String(brand).trim() : "Unspecified",
+      brandLogo: brandLogo ? String(brandLogo).trim() : undefined,
       category: String(category).trim(),
       categoryId: categoryToSlug(String(category).trim()),
       shortDescription: shortDescription ? String(shortDescription).trim() : String(description || "").slice(0, 120),
       description: description ? String(description).trim() : String(shortDescription || name).trim(),
-      image: image ? String(image).trim() : "/images/pipes.jpg",
+      image: image ? String(image).trim() : "/images/products/steel-tmt-bars.jpg",
+      imageAlt: imageAlt ? String(imageAlt).trim() : `${name} product photograph`,
       gallery: Array.isArray(gallery) ? gallery : [],
       specifications: typeof specifications === "object" && specifications !== null ? specifications : {},
       isActive: typeof isActive === "boolean" ? isActive : true,
@@ -265,10 +269,12 @@ export async function updateProduct(req: Request, res: Response): Promise<void> 
     const {
       name,
       brand,
+      brandLogo,
       category,
       shortDescription,
       description,
       image,
+      imageAlt,
       gallery,
       specifications,
       isActive,
@@ -287,6 +293,9 @@ export async function updateProduct(req: Request, res: Response): Promise<void> 
     if (brand !== undefined) {
       updates.brand = String(brand).trim();
     }
+    if (brandLogo !== undefined) {
+      updates.brandLogo = String(brandLogo).trim();
+    }
     if (category && String(category).trim()) {
       updates.category = String(category).trim();
       updates.categoryId = categoryToSlug(String(category).trim());
@@ -299,6 +308,9 @@ export async function updateProduct(req: Request, res: Response): Promise<void> 
     }
     if (image !== undefined) {
       updates.image = String(image).trim();
+    }
+    if (imageAlt !== undefined) {
+      updates.imageAlt = String(imageAlt).trim();
     }
     if (Array.isArray(gallery)) {
       updates.gallery = gallery;

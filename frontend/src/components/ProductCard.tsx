@@ -2,21 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import type { Product } from '../types';
-import { getWhatsAppEnquiryUrl } from '../data/products';
+import { getWhatsAppEnquiryUrl, BRAND_LOGOS } from '../data/products';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const brandLogo = product.brandLogo || (product.brand ? BRAND_LOGOS[product.brand] : undefined);
+  const isGeneric = !product.brand || product.brand === 'Unspecified' || product.brand === 'Unbranded / Generic';
+
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#E2E6EC] flex flex-col h-full overflow-hidden group">
       
-      {/* Image Container with category overlay tag */}
+      {/* Image Container with category overlay tag and brand label */}
       <div className="relative aspect-4/3 overflow-hidden bg-slate-100">
         <img
           src={product.image}
-          alt={product.name}
+          alt={product.imageAlt || product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -26,11 +29,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.category}
         </div>
 
-        {/* Brand Tag if applicable */}
-        {product.brand && product.brand !== 'Unspecified' && (
-          <div className="absolute top-3 right-3 bg-white/90 text-[#14263D] text-[11px] font-bold px-2.5 py-1 rounded-md shadow-sm border border-slate-200 flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-[#D7A94B]" />
-            <span>{product.brand}</span>
+        {/* Dedicated Brand Badge / Logo Area */}
+        {!isGeneric && (
+          <div className="absolute top-3 right-3 bg-white/95 text-[#14263D] px-2.5 py-1 rounded-md shadow-sm border border-slate-200 flex items-center gap-1.5 backdrop-blur-sm">
+            {brandLogo ? (
+              <img
+                src={brandLogo}
+                alt={`${product.brand} logo`}
+                className="h-4 max-w-[80px] object-contain"
+                loading="lazy"
+              />
+            ) : (
+              <>
+                <ShieldCheck className="w-3.5 h-3.5 text-[#D7A94B] shrink-0" />
+                <span className="text-[11px] font-bold tracking-tight">{product.brand}</span>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -38,6 +52,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Card Content */}
       <div className="p-5 flex flex-col flex-grow justify-between">
         <div>
+          {/* Brand Name Text above title if logo is shown */}
+          {!isGeneric && (
+            <div className="text-[11px] font-bold text-[#D7A94B] uppercase tracking-wider mb-1 flex items-center gap-1">
+              <span>{product.brand}</span>
+            </div>
+          )}
+
           <h3 className="text-base font-extrabold text-[#14263D] group-hover:text-[#D7A94B] transition-colors leading-snug">
             <Link to={`/product/${product.id}`}>{product.name}</Link>
           </h3>
