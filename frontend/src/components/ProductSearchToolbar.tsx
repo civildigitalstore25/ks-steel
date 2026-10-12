@@ -18,7 +18,7 @@ export const ProductSearchToolbar: React.FC<ProductSearchToolbarProps> = ({
   availableBrands,
 }) => {
   return (
-    <div className="bg-[#F5F6F8] p-4 sm:p-5 rounded-2xl border border-[#E2E6EC] shadow-sm font-sans mb-8">
+    <div className="bg-white p-3 sm:p-4 rounded-2xl border border-[#E2E6EC] shadow-[0_12px_40px_-18px_rgba(11,23,40,0.45)] font-sans">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
         
         {/* Search Input */}

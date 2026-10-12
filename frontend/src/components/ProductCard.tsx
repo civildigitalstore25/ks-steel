@@ -13,7 +13,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isGeneric = !product.brand || product.brand === 'Unspecified' || product.brand === 'Unbranded / Generic';
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#E2E6EC] flex flex-col h-full overflow-hidden group">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border border-[#E2E6EC] flex flex-col h-full overflow-hidden group">
       
       {/* Image Container with category overlay tag and brand label */}
       <div className="relative aspect-4/3 overflow-hidden bg-slate-100">
@@ -63,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <Link to={`/product/${product.id}`}>{product.name}</Link>
           </h3>
 
-          <p className="text-[#667085] text-xs sm:text-sm mt-2 leading-relaxed line-clamp-3">
+          <p className="text-[#667085] text-sm mt-2 leading-relaxed line-clamp-2">
             {product.shortDescription}
           </p>
 
@@ -77,25 +77,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Bottom Action Area */}
-        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
           
           {/* View Details White Button */}
           <Link
             to={`/product/${product.id}`}
-            className="flex-1 inline-flex items-center justify-center gap-1 bg-white hover:bg-slate-50 text-[#14263D] text-xs font-bold py-2.5 px-3 rounded-lg border border-[#E2E6EC] transition-colors text-center"
+            className="flex-1 inline-flex items-center justify-center gap-1 bg-white hover:bg-slate-50 text-[#14263D] text-[11px] sm:text-xs font-bold py-2.5 px-2.5 rounded-lg border border-[#E2E6EC] transition-colors text-center whitespace-nowrap"
           >
             <span>View Details</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5 shrink-0" />
           </Link>
 
-          {/* Enquire for Price Dark Navy Button */}
           <a
             href={getWhatsAppEnquiryUrl(product.name)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#14263D] hover:bg-[#0B1728] text-white text-xs font-bold py-2.5 px-3 rounded-lg shadow-sm transition-colors text-center"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#14263D] hover:bg-[#0B1728] text-white text-[11px] sm:text-xs font-bold py-2.5 px-2.5 rounded-lg shadow-sm transition-colors text-center whitespace-nowrap"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
+            <MessageSquare className="w-3.5 h-3.5 text-[#25D366] shrink-0" />
             <span>Enquire Price</span>
           </a>
 
