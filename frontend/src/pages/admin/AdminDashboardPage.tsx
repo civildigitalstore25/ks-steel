@@ -9,27 +9,24 @@ import {
   Trash2, 
   ExternalLink,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Database
 } from 'lucide-react';
 import type { Product } from '../../types';
-import { fetchAdminProducts, deleteAdminProduct } from '../../services/api';
-import { PRODUCTS as FALLBACK_PRODUCTS } from '../../data/products';
+import { fetchAdminProducts, deleteAdminProduct, resetMockData } from '../../services/api';
 
 export const AdminDashboardPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [notification, setNotification] = useState('');
 
   const loadProducts = async () => {
     setLoading(true);
-    setError('');
     try {
       const data = await fetchAdminProducts();
       setProducts(data);
     } catch (err) {
-      console.warn('Backend offline or error, falling back to local dataset:', err);
-      setProducts(FALLBACK_PRODUCTS as Product[]);
-      setError('Using local cached product data. Ensure backend server is connected to MongoDB.');
+      console.warn('Failed to load products from mock store:', err);
     } finally {
       setLoading(false);
     }
@@ -44,9 +41,19 @@ export const AdminDashboardPage: React.FC = () => {
     try {
       await deleteAdminProduct(id);
       setProducts(products.filter((p) => p.id !== id && (p as any)._id !== id));
+      setNotification('Product deleted from mock database.');
+      setTimeout(() => setNotification(''), 3000);
     } catch (err: any) {
       alert(err.message || 'Failed to delete product.');
     }
+  };
+
+  const handleSeedMockData = () => {
+    if (!window.confirm('Re-seed all 35 mock products from master catalog? This will refresh frontend mock storage.')) return;
+    const seeded = resetMockData();
+    setProducts(seeded);
+    setNotification('Mock catalogue reset & seeded successfully with 35 verified products!');
+    setTimeout(() => setNotification(''), 4000);
   };
 
   const totalCount = products.length;
@@ -61,14 +68,22 @@ export const AdminDashboardPage: React.FC = () => {
         <div>
           <span className="text-[#D7A94B] font-extrabold text-xs uppercase tracking-widest flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-[#D7A94B]" />
-            <span>K.S. STEEL CORPORATION ADMIN</span>
+            <span>K.S. STEEL CORPORATION ADMIN • FRONTEND MOCK STORAGE</span>
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#14263D] mt-1">
             Product Management Dashboard
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleSeedMockData}
+            className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-slate-700"
+            title="Reset and re-seed all 35 mock products in frontend localStorage"
+          >
+            <Database className="w-4 h-4 text-[#D7A94B]" />
+            <span>Seed Mock Data (35)</span>
+          </button>
           <button
             onClick={loadProducts}
             className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:text-[#14263D] shadow-sm transition-colors"
@@ -86,9 +101,10 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {error && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
-          {error}
+      {notification && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{notification}</span>
         </div>
       )}
 

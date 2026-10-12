@@ -23,19 +23,26 @@ export const HomePage: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadFeatured() {
-      try {
-        const data = await fetchPublicProducts();
-        const popular = data.filter((p) => p.isPopular);
-        setFeaturedProducts(popular.length > 0 ? popular.slice(0, 6) : data.slice(0, 6));
-      } catch (err) {
-        console.warn('Failed to load featured products from backend:', err);
-      } finally {
-        setLoading(false);
-      }
+  const loadFeatured = async () => {
+    try {
+      const data = await fetchPublicProducts();
+      const popular = data.filter((p) => p.isPopular);
+      setFeaturedProducts(popular.length > 0 ? popular.slice(0, 6) : data.slice(0, 6));
+    } catch (err) {
+      console.warn('Failed to load featured products from mock store:', err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     loadFeatured();
+
+    const handleUpdate = () => loadFeatured();
+    window.addEventListener('ks_products_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('ks_products_updated', handleUpdate);
+    };
   }, []);
 
   const verifiedFeaturedBrands = [

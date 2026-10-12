@@ -26,46 +26,51 @@ export const ProductsPage: React.FC = () => {
     setSelectedBrand(searchParams.get('brand') || 'all');
   }, [searchParams]);
 
-  // Fetch all products for category counts
-  useEffect(() => {
-    async function loadAllProducts() {
-      try {
-        const data = await fetchPublicProducts();
-        setAllProducts(data);
-      } catch (err) {
-        console.warn('Failed to fetch all products from backend:', err);
-      }
+  // Load all products for category counts
+  const loadAllProducts = async () => {
+    try {
+      const data = await fetchPublicProducts();
+      setAllProducts(data);
+    } catch (err) {
+      console.warn('Failed to load products from mock store:', err);
     }
+  };
+
+  useEffect(() => {
     loadAllProducts();
   }, []);
 
-  // Fetch filtered products live from backend API
-  useEffect(() => {
-    let isMounted = true;
-    async function loadBackendProducts() {
-      setLoading(true);
-      try {
-        const data = await fetchPublicProducts({
-          search: searchQuery,
-          category: selectedCategory,
-          brand: selectedBrand
-        });
-        if (isMounted) {
-          setLiveProducts(data);
-        }
-      } catch (err) {
-        console.warn('Backend API error:', err);
-        if (isMounted) {
-          setLiveProducts([]);
-        }
-      } finally {
-        if (isMounted) setLoading(false);
-      }
+  // Load filtered products
+  const loadFilteredProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchPublicProducts({
+        search: searchQuery,
+        category: selectedCategory,
+        brand: selectedBrand
+      });
+      setLiveProducts(data);
+    } catch (err) {
+      console.warn('Mock store query error:', err);
+      setLiveProducts([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    loadBackendProducts();
+  useEffect(() => {
+    loadFilteredProducts();
+  }, [searchQuery, selectedCategory, selectedBrand]);
+
+  // Listen for mock data updates (e.g. admin add/edit/delete or re-seed)
+  useEffect(() => {
+    const handleUpdate = () => {
+      loadAllProducts();
+      loadFilteredProducts();
+    };
+    window.addEventListener('ks_products_updated', handleUpdate);
     return () => {
-      isMounted = false;
+      window.removeEventListener('ks_products_updated', handleUpdate);
     };
   }, [searchQuery, selectedCategory, selectedBrand]);
 

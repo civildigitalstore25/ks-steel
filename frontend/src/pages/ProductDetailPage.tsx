@@ -43,7 +43,7 @@ export const ProductDetailPage: React.FC = () => {
           );
         }
       } catch (err) {
-        console.warn('Failed to load product details from backend API:', err);
+        console.warn('Failed to load product details from mock store:', err);
         setError(true);
       } finally {
         setLoading(false);
@@ -51,13 +51,19 @@ export const ProductDetailPage: React.FC = () => {
     }
 
     loadData();
+
+    const handleUpdate = () => loadData();
+    window.addEventListener('ks_products_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('ks_products_updated', handleUpdate);
+    };
   }, [id]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center p-4">
         <div className="text-slate-500 font-semibold text-sm">
-          Loading product details from database...
+          Loading product details...
         </div>
       </div>
     );

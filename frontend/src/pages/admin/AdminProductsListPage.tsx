@@ -8,17 +8,20 @@ import {
   CheckCircle2, 
   XCircle, 
   X,
-  Package
+  Package,
+  Database,
+  RefreshCw
 } from 'lucide-react';
 import type { Product } from '../../types';
-import { fetchAdminProducts, deleteAdminProduct } from '../../services/api';
-import { PRODUCT_CATEGORIES, PRODUCTS as FALLBACK_PRODUCTS } from '../../data/products';
+import { fetchAdminProducts, deleteAdminProduct, resetMockData } from '../../services/api';
+import { PRODUCT_CATEGORIES } from '../../data/products';
 
 export const AdminProductsListPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState('');
 
   const loadProducts = async () => {
     setLoading(true);
@@ -26,21 +29,7 @@ export const AdminProductsListPage: React.FC = () => {
       const data = await fetchAdminProducts({ search, category: selectedCategory });
       setProducts(data);
     } catch (err) {
-      console.warn('Fallback to local products list:', err);
-      let list = FALLBACK_PRODUCTS as Product[];
-      if (selectedCategory !== 'all') {
-        list = list.filter((p) => p.categoryId === selectedCategory || p.category === selectedCategory);
-      }
-      if (search.trim() !== '') {
-        const q = search.toLowerCase();
-        list = list.filter(
-          (p) =>
-            p.name.toLowerCase().includes(q) ||
-            (p.brand && p.brand.toLowerCase().includes(q)) ||
-            p.category.toLowerCase().includes(q)
-        );
-      }
-      setProducts(list);
+      console.warn('Failed to load products from mock store:', err);
     } finally {
       setLoading(false);
     }
@@ -55,9 +44,21 @@ export const AdminProductsListPage: React.FC = () => {
     try {
       await deleteAdminProduct(id);
       setProducts(products.filter((p) => p.id !== id && (p as any)._id !== id));
+      setNotification('Product deleted from mock database.');
+      setTimeout(() => setNotification(''), 3000);
     } catch (err: any) {
       alert(err.message || 'Failed to delete product.');
     }
+  };
+
+  const handleSeedMockData = () => {
+    if (!window.confirm('Re-seed all 35 mock products from master catalog? This will refresh frontend mock storage.')) return;
+    const seeded = resetMockData();
+    setProducts(seeded);
+    setSearch('');
+    setSelectedCategory('all');
+    setNotification('Mock catalogue reset & seeded successfully with 35 verified products!');
+    setTimeout(() => setNotification(''), 4000);
   };
 
   return (
@@ -70,18 +71,42 @@ export const AdminProductsListPage: React.FC = () => {
             All Products Catalogue
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-            Manage public visibility, update product descriptions, or add new items.
+            Manage public visibility, update product descriptions, or seed mock items in frontend storage.
           </p>
         </div>
 
-        <Link
-          to="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-bold text-sm py-2.5 px-5 rounded-xl shadow transition-all transform active:scale-95 shrink-0"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Add New Product</span>
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleSeedMockData}
+            className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-slate-700"
+            title="Reset and re-seed all 35 mock products in frontend localStorage"
+          >
+            <Database className="w-4 h-4 text-[#D7A94B]" />
+            <span>Seed Mock Data (35)</span>
+          </button>
+          <button
+            onClick={loadProducts}
+            className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:text-[#14263D] shadow-sm transition-colors"
+            title="Refresh Data"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+          <Link
+            to="/admin/products/new"
+            className="inline-flex items-center justify-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-bold text-sm py-2.5 px-5 rounded-xl shadow transition-all transform active:scale-95 shrink-0"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Add New Product</span>
+          </Link>
+        </div>
       </div>
+
+      {notification && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{notification}</span>
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">

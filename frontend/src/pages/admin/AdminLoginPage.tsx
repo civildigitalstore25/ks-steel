@@ -118,8 +118,9 @@ export const AdminLoginPage: React.FC = () => {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
-          Superadmin access only • Protected by JWT Session
+        <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-400 space-y-1">
+          <p className="font-semibold text-[#D7A94B]">Frontend Mock Database Mode Active</p>
+          <p className="text-slate-500">Instant sign-in ready • Pre-filled credentials work without backend</p>
         </div>
 
       </div>

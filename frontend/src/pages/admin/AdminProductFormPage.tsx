@@ -261,10 +261,10 @@ export const AdminProductFormPage: React.FC = () => {
 
       if (isEditMode && id) {
         await updateAdminProduct(id, payload);
-        setSuccess('Product updated successfully in MongoDB database!');
+        setSuccess('Product updated successfully in frontend mock database!');
       } else {
         await createAdminProduct(payload);
-        setSuccess('Product created successfully in MongoDB database!');
+        setSuccess('Product created and seeded successfully in frontend mock database!');
       }
 
       setTimeout(() => {
