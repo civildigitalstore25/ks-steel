@@ -11,6 +11,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const brandLogo = product.brandLogo || (product.brand ? BRAND_LOGOS[product.brand] : undefined);
   const isGeneric = !product.brand || product.brand === 'Unspecified' || product.brand === 'Unbranded / Generic';
+  const isBirlaOpus = product.brand === 'Birla Opus';
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border border-[#E2E6EC] flex flex-col h-full overflow-hidden group">
@@ -31,12 +32,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Dedicated Brand Badge / Logo Area */}
         {!isGeneric && (
-          <div className="absolute top-2.5 right-2.5 z-10 flex h-12 max-w-[52%] items-center justify-center rounded-lg bg-white px-2.5 shadow-[0_6px_16px_rgba(11,23,40,0.28)] ring-1 ring-black/10">
+          <div className={`absolute top-2.5 right-2.5 z-10 flex items-center justify-center rounded-lg bg-white shadow-[0_6px_16px_rgba(11,23,40,0.28)] ring-1 ring-black/10 ${isBirlaOpus ? "h-16 max-w-[60%] px-2" : "h-12 max-w-[52%] px-2.5"}`}>
             {brandLogo ? (
               <img
                 src={brandLogo}
                 alt={`${product.brand} logo`}
-                className="h-8 w-auto max-w-full object-contain"
+                className={isBirlaOpus ? "h-14 w-auto max-w-full object-contain" : "h-8 w-auto max-w-full object-contain"}
                 loading="lazy"
               />
             ) : (

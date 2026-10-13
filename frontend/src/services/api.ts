@@ -4,7 +4,7 @@ import { PRODUCTS as DEFAULT_PRODUCTS } from '../data/products';
 // Storage keys
 const STORAGE_KEY = 'ks_steel_mock_products';
 const STORAGE_VERSION_KEY = 'ks_steel_mock_version';
-const CURRENT_VERSION = '2.2.2';
+const CURRENT_VERSION = '2.2.3';
 const TOKEN_KEY = 'ks_admin_token';
 const ADMIN_USER_KEY = 'ks_admin_user';
 

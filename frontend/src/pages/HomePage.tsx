@@ -45,11 +45,11 @@ export const HomePage: React.FC = () => {
     };
   }, []);
 
-  const verifiedFeaturedBrands = [
+  const verifiedFeaturedBrands: { name: string; logo: string; logoClass?: string }[] = [
     { name: "Amman Try Steel", logo: "/images/logos/amman-try.svg" },
     { name: "Viki TMT", logo: "/images/logos/viki-tmt.png" },
     { name: "UltraTech Cement", logo: "/images/logos/ultratech.jpg" },
-    { name: "Birla Opus", logo: "/images/logos/birla-opus.png" },
+    { name: "Birla Opus", logo: "/images/logos/birla-opus.jpeg", logoClass: "max-h-14 max-w-[148px]" },
     { name: "Asian Paints", logo: "/images/logos/asian-paints.svg" },
     { name: "Bosch", logo: "/images/logos/bosch.svg" },
     { name: "Makita", logo: "/images/logos/makita.svg" },
@@ -147,14 +147,14 @@ export const HomePage: React.FC = () => {
               <Link
                 key={b.name}
                 to={`/products?brand=${encodeURIComponent(b.name)}`}
-                className="bg-slate-50 hover:bg-white p-3 rounded-xl border border-slate-200 shadow-xs hover:shadow-sm hover:border-[#D7A94B] transition-all flex flex-col items-center justify-center h-16 group"
+                className="bg-slate-50 hover:bg-white px-3 py-1 rounded-xl border border-slate-200 shadow-xs hover:shadow-sm hover:border-[#D7A94B] transition-all flex flex-col items-center justify-center h-16 overflow-hidden group"
                 title={`View ${b.name} products`}
                 aria-label={`View ${b.name} products`}
               >
                 <img
                   src={b.logo}
                   alt=""
-                  className="max-h-8 max-w-[105px] object-contain filter group-hover:scale-105 transition-transform"
+                  className={`${b.logoClass ?? "max-h-8 max-w-[105px]"} object-contain group-hover:scale-105 transition-transform`}
                   loading="lazy"
                 />
               </Link>

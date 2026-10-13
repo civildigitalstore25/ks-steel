@@ -197,7 +197,7 @@ export const INITIAL_PRODUCTS: Omit<ProductDocument, "_id">[] = [
     name: "Birla Opus Calista Interior Emulsion",
     slug: "birla-opus-interior-emulsion",
     brand: "Birla Opus",
-    brandLogo: "/images/logos/birla-opus.png",
+    brandLogo: "/images/logos/birla-opus.jpeg",
     category: "Paint",
     categoryId: "paint",
     image: "/images/products/paint-emulsion.jpg",
