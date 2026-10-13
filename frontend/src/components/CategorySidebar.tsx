@@ -31,7 +31,7 @@ export const CategorySidebar: React.FC<CategorySidebarProps> = ({
   ];
 
   return (
-    <aside className="w-full space-y-6 font-sans">
+    <aside className="w-full space-y-4 font-sans lg:sticky lg:top-32">
       
       {/* Category Sidebar Container */}
       <div className="bg-white rounded-xl border border-[#E2E6EC] shadow-sm overflow-hidden">
@@ -79,20 +79,20 @@ export const CategorySidebar: React.FC<CategorySidebarProps> = ({
       </div>
 
       {/* Sidebar Bottom Enquiry Card */}
-      <div className="bg-[#F5F6F8] p-5 rounded-xl border border-[#E2E6EC] text-left space-y-3">
-        <h3 className="font-extrabold text-sm text-[#14263D]">
+      <div className="bg-[#14263D] p-5 rounded-xl text-left space-y-3 shadow-sm">
+        <h3 className="font-extrabold text-sm text-white">
           Can't find a product?
         </h3>
-        <p className="text-slate-600 text-xs leading-relaxed">
+        <p className="text-slate-300 text-xs leading-relaxed">
           Send us your requirement and we'll help confirm availability at our store.
         </p>
         <a
           href={getWhatsAppEnquiryUrl("custom requirement")}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-xs font-bold text-[#25D366] hover:underline pt-1"
+          className="inline-flex items-center gap-2 text-xs font-bold text-white bg-[#25D366] hover:bg-[#1EBE57] rounded-lg px-3 py-2 transition-colors"
         >
-          <MessageSquare className="w-4 h-4 fill-current text-[#25D366]" />
+          <MessageSquare className="w-4 h-4" />
           <span>Ask on WhatsApp</span>
         </a>
       </div>

@@ -144,18 +144,20 @@ export const HomePage: React.FC = () => {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center">
             {verifiedFeaturedBrands.map((b) => (
-              <div 
-                key={b.name} 
-                className="bg-slate-50 hover:bg-white p-3 rounded-xl border border-slate-200 shadow-xs hover:shadow-sm transition-all flex flex-col items-center justify-center h-16 group"
-                title={b.name}
+              <Link
+                key={b.name}
+                to={`/products?brand=${encodeURIComponent(b.name)}`}
+                className="bg-slate-50 hover:bg-white p-3 rounded-xl border border-slate-200 shadow-xs hover:shadow-sm hover:border-[#D7A94B] transition-all flex flex-col items-center justify-center h-16 group"
+                title={`View ${b.name} products`}
+                aria-label={`View ${b.name} products`}
               >
                 <img
                   src={b.logo}
-                  alt={`${b.name} official brand logo`}
+                  alt=""
                   className="max-h-8 max-w-[105px] object-contain filter group-hover:scale-105 transition-transform"
                   loading="lazy"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
