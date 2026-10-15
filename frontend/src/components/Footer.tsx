@@ -8,6 +8,7 @@ export const Footer: React.FC = () => {
     { label: 'Home', to: '/' },
     { label: 'Product Catalogue', to: '/products' },
     { label: 'About Us', to: '/about' },
+    { label: 'Blog', to: '/blog' },
     { label: 'Contact & Directions', to: '/contact' },
   ];
 

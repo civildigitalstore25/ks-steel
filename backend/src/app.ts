@@ -7,6 +7,7 @@ import { getDatabase } from "./db/mongo.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
 
 export const app = express();
 
@@ -49,6 +50,7 @@ app.get("/api/health", async (_request, response) => {
 // API Routes Registration
 app.use("/api/admin/auth", authRoutes);
 app.use("/api", productRoutes);
+app.use("/api", blogRoutes);
 app.use("/api", uploadRoutes);
 
 // 404 Route Fallback

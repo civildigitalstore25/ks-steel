@@ -23,6 +23,64 @@
   }
 }
 
+.rich-text h2 {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #14263D;
+  margin: 1rem 0 0.4rem;
+}
+.rich-text h3 {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #14263D;
+  margin: 0.85rem 0 0.35rem;
+}
+.rich-text p { margin: 0.45rem 0; line-height: 1.7; }
+.rich-text ul { list-style: disc; padding-left: 1.25rem; margin: 0.45rem 0; }
+.rich-text ol { list-style: decimal; padding-left: 1.25rem; margin: 0.45rem 0; }
+.rich-text li { margin: 0.2rem 0; }
+.rich-text a { color: #14263D; text-decoration: underline; }
+.rich-text blockquote {
+  border-left: 3px solid #D7A94B;
+  margin: 0.75rem 0;
+  padding-left: 0.75rem;
+  color: #475569;
+}
+.rich-text code {
+  background: #f1f5f9;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+.rich-text img,
+.rich-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 0.75rem 0;
+}
+.rich-text iframe,
+.rich-editor iframe {
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 0.75rem;
+  margin: 0.75rem 0;
+}
+.rich-editor .ProseMirror-selectednode {
+  outline: 2px solid #D7A94B;
+}
+.rich-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

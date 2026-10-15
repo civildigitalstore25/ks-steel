@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, Navigate, Outlet } from 'react-router-d
 import { 
   LayoutDashboard, 
   Package, 
-  PlusCircle, 
+  Newspaper,
   ExternalLink, 
   LogOut, 
   Menu, 
@@ -37,9 +37,14 @@ export const AdminLayout: React.FC = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Products Management', path: '/admin/products', icon: Package },
-    { name: 'Add New Product', path: '/admin/products/new', icon: PlusCircle },
+    { name: 'Products', path: '/admin/products', icon: Package },
+    { name: 'Blog Posts', path: '/admin/blogs', icon: Newspaper },
   ];
+
+  const isNavActive = (path: string) =>
+    path === '/admin/dashboard'
+      ? location.pathname === path
+      : location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const handleLogout = async () => {
     await logout();
@@ -80,7 +85,7 @@ export const AdminLayout: React.FC = () => {
           <nav className="p-4 space-y-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const active = location.pathname === item.path;
+              const active = isNavActive(item.path);
               return (
                 <Link
                   key={item.name}
@@ -149,7 +154,7 @@ export const AdminLayout: React.FC = () => {
           <div className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const active = location.pathname === item.path;
+              const active = isNavActive(item.path);
               return (
                 <Link
                   key={item.name}
@@ -186,7 +191,7 @@ export const AdminLayout: React.FC = () => {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-grow p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full">
+      <main className="flex-grow p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full font-sans text-[#202A36]">
         <Outlet />
       </main>
 

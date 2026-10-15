@@ -11,12 +11,16 @@ import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
+import { BlogListPage } from './pages/BlogListPage';
+import { BlogPostPage } from './pages/BlogPostPage';
 
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminLayout } from './layouts/AdminLayout';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminProductsListPage } from './pages/admin/AdminProductsListPage';
 import { AdminProductFormPage } from './pages/admin/AdminProductFormPage';
+import { AdminBlogsListPage } from './pages/admin/AdminBlogsListPage';
+import { AdminBlogFormPage } from './pages/admin/AdminBlogFormPage';
 
 // Scroll to top helper component on page change
 const ScrollToTop: React.FC = () => {
@@ -41,6 +45,8 @@ const PublicLayout: React.FC = () => {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -66,6 +72,9 @@ export function App() {
             <Route path="products" element={<AdminProductsListPage />} />
             <Route path="products/new" element={<AdminProductFormPage />} />
             <Route path="products/edit/:id" element={<AdminProductFormPage />} />
+            <Route path="blogs" element={<AdminBlogsListPage />} />
+            <Route path="blogs/new" element={<AdminBlogFormPage />} />
+            <Route path="blogs/edit/:id" element={<AdminBlogFormPage />} />
           </Route>
 
           {/* Public Website Routes */}

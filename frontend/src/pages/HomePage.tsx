@@ -16,11 +16,14 @@ import {
   getWhatsAppEnquiryUrl 
 } from '../data/products';
 import { fetchPublicProducts } from '../services/api';
-import type { Product } from '../types';
+import { fetchPublishedBlogs } from '../services/blogApi';
+import type { BlogPost, Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
+import { BlogPreviewCard } from '../components/BlogPreviewCard';
 
 export const HomePage: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [guides, setGuides] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadFeatured = async () => {
@@ -37,6 +40,7 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     loadFeatured();
+    fetchPublishedBlogs().then((posts) => setGuides(posts.slice(0, 3))).catch(() => setGuides([]));
 
     const handleUpdate = () => loadFeatured();
     window.addEventListener('ks_products_updated', handleUpdate);
@@ -315,6 +319,25 @@ export const HomePage: React.FC = () => {
           </div>
         )}
       </section>
+
+      {guides.length > 0 && (
+        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-[#D7A94B] font-bold text-xs uppercase tracking-widest">BLOG</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#14263D] mt-1">From the store</h2>
+            </div>
+            <Link to="/blog" className="text-sm font-bold text-[#14263D] inline-flex items-center gap-1">
+              All blogs <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {guides.map((post) => (
+              <BlogPreviewCard key={post._id} post={post} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* STORE LOCATION CTA BANNER */}
       <section className="bg-white border-t border-slate-200 py-16 px-4 sm:px-6 lg:px-8">

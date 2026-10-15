@@ -209,59 +209,47 @@ export async function fetchPublicProductByIdOrSlug(idOrSlug: string): Promise<Pr
 // --- ADMIN AUTH API METHODS (Frontend Mock Data) ---
 
 export async function loginAdmin(credentials: { email: string; password: string }) {
-  await delay(80);
   const email = (credentials.email || '').trim().toLowerCase();
   const password = credentials.password || '';
-
-  // Allow predefined superadmin credentials or any admin login in mock mode
   if (!email || !password) {
     throw new Error('Please enter both email and password.');
   }
 
-  const mockToken = `ks_mock_jwt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-  const user = {
-    id: 'admin_mock_1',
-    email: credentials.email,
-    role: 'superadmin'
-  };
+  const response = await fetch('/api/admin/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email, password })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || 'Invalid superadmin credentials.');
+  }
 
-  setAdminToken(mockToken);
-  localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(user));
-
-  return {
-    success: true,
-    token: mockToken,
-    user
-  };
+  setAdminToken(data.token);
+  localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(data.user));
+  return { success: true, token: data.token, user: data.user };
 }
 
 export async function checkAdminMe() {
-  await delay(40);
   const token = getAdminToken();
   if (!token) {
     throw new Error('Unauthorized');
   }
 
-  const storedUser = localStorage.getItem(ADMIN_USER_KEY);
-  let user = {
-    id: 'admin_mock_1',
-    email: 'superadmin@kssteel.com',
-    role: 'superadmin'
-  };
-
-  if (storedUser) {
-    try {
-      user = JSON.parse(storedUser);
-    } catch {
-      // Use fallback
-    }
+  const response = await fetch('/api/admin/auth/me', {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    removeAdminToken();
+    throw new Error('Unauthorized');
   }
-
-  return { user };
+  return response.json();
 }
 
 export async function logoutAdmin(): Promise<void> {
-  await delay(30);
+  await fetch('/api/admin/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => undefined);
   removeAdminToken();
 }
 

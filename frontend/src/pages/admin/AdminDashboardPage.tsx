@@ -4,7 +4,6 @@ import {
   Package, 
   CheckCircle2, 
   XCircle, 
-  PlusCircle, 
   Edit, 
   Trash2, 
   ExternalLink,
@@ -91,13 +90,6 @@ export const AdminDashboardPage: React.FC = () => {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
-          <Link
-            to="/admin/products/new"
-            className="inline-flex items-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-bold text-sm py-2.5 px-5 rounded-xl shadow transition-all transform active:scale-95"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Add New Product</span>
-          </Link>
         </div>
       </div>
 
@@ -123,7 +115,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Active Public Items</span>
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Published</span>
             <h2 className="text-3xl font-extrabold text-emerald-600 mt-1">{activeCount}</h2>
           </div>
           <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -133,7 +125,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Draft / Inactive</span>
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Drafts</span>
             <h2 className="text-3xl font-extrabold text-slate-500 mt-1">{inactiveCount}</h2>
           </div>
           <div className="w-12 h-12 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center">
@@ -225,7 +217,7 @@ export const AdminDashboardPage: React.FC = () => {
                               isActive ? 'bg-emerald-500' : 'bg-slate-400'
                             }`}
                           />
-                          {isActive ? 'Active' : 'Inactive'}
+                          {isActive ? 'Published' : 'Draft'}
                         </span>
                       </td>
                       <td className="py-3.5 px-6 text-right space-x-2">

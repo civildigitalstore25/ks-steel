@@ -15,6 +15,8 @@ import {
   uploadProductImage 
 } from '../../services/api';
 import { BRAND_LOGOS } from '../../data/products';
+import { RichTextEditor } from '../../components/RichTextEditor';
+import { plainTextFromHtml } from '../../components/RichText';
 
 const CATEGORY_OPTIONS = [
   "Steel",
@@ -202,7 +204,7 @@ export const AdminProductFormPage: React.FC = () => {
     setSpecifications(specifications.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -216,6 +218,18 @@ export const AdminProductFormPage: React.FC = () => {
       setError('Category is required.');
       return;
     }
+
+    const descriptionText = plainTextFromHtml(formData.description);
+    if (descriptionText.length < 20) {
+      setError('Add a fuller product description in the editor.');
+      return;
+    }
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    const isActive = submitter?.value === 'draft'
+      ? false
+      : submitter?.value === 'published'
+        ? true
+        : formData.isActive;
 
     setLoading(true);
 
@@ -248,12 +262,12 @@ export const AdminProductFormPage: React.FC = () => {
         brand: effectiveBrand,
         brandLogo: formData.brandLogo.trim() || (BRAND_LOGOS[effectiveBrand] || undefined),
         category: formData.category,
-        shortDescription: formData.shortDescription.trim() || formData.description.slice(0, 120),
+        shortDescription: formData.shortDescription.trim() || descriptionText.slice(0, 160),
         description: formData.description.trim() || formData.name,
         image: finalImageUrl,
         imageAlt: formData.imageAlt.trim() || `${formData.name} product photograph`,
         specifications: specsObj,
-        isActive: formData.isActive,
+        isActive,
         isPopular: formData.isPopular,
         isPlaceholder: formData.isPlaceholder,
         verificationNote: formData.verificationNote.trim() || undefined
@@ -477,14 +491,10 @@ export const AdminProductFormPage: React.FC = () => {
             <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">
               Full Product Description *
             </label>
-            <textarea
-              name="description"
-              rows={4}
-              required
-              placeholder="Detailed description of materials, specifications, and applications..."
+            <RichTextEditor
               value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-[#14263D] focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+              onChange={(html) => setFormData((current) => ({ ...current, description: html }))}
+              placeholder="Describe the material, where it is used, and what the customer should check."
             />
           </div>
         </div>
@@ -607,19 +617,17 @@ export const AdminProductFormPage: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition-colors">
-              <input
-                type="checkbox"
-                name="isActive"
-                checked={formData.isActive}
-                onChange={handleInputChange}
-                className="w-4 h-4 text-[#14263D] rounded border-slate-300 focus:ring-[#D7A94B]"
-              />
-              <div>
-                <span className="font-bold text-xs text-[#14263D] block">Active / Visible on Public Website</span>
-                <span className="text-[11px] text-slate-500">Uncheck to hide this product from public catalogue</span>
-              </div>
-            </label>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <label className="block text-xs font-bold text-[#14263D] uppercase tracking-wider mb-1.5">Visibility</label>
+              <select
+                value={formData.isActive ? 'published' : 'draft'}
+                onChange={(e) => setFormData((current) => ({ ...current, isActive: e.target.value === 'published' }))}
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-[#14263D] font-semibold focus:outline-none focus:ring-2 focus:ring-[#D7A94B]"
+              >
+                <option value="draft">Draft — hidden from the website</option>
+                <option value="published">Published — visible in the catalogue</option>
+              </select>
+            </div>
 
             <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition-colors">
               <input
@@ -647,11 +655,20 @@ export const AdminProductFormPage: React.FC = () => {
           </Link>
           <button
             type="submit"
+            value="draft"
+            disabled={loading}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          >
+            {loading ? 'Saving...' : 'Save as draft'}
+          </button>
+          <button
+            type="submit"
+            value="published"
             disabled={loading}
             className="inline-flex items-center justify-center gap-2 bg-[#D7A94B] hover:bg-[#C5973A] text-[#0B1728] font-extrabold text-sm py-2.5 px-6 rounded-xl shadow transition-all transform active:scale-95 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{loading ? 'Saving to Database...' : isEditMode ? 'Update Product' : 'Create Product'}</span>
+            <span>{loading ? 'Saving...' : isEditMode ? 'Publish update' : 'Publish product'}</span>
           </button>
         </div>
 

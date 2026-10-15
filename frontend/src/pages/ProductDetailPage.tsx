@@ -14,6 +14,7 @@ import { BUSINESS_INFO, getWhatsAppEnquiryUrl, BRAND_LOGOS } from '../data/produ
 import { fetchPublicProductByIdOrSlug, fetchPublicProducts } from '../services/api';
 import type { Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
+import { RichText } from '../components/RichText';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -171,9 +172,10 @@ export const ProductDetailPage: React.FC = () => {
                   </div>
                 )}
 
-                <p className="text-slate-600 mt-4 leading-relaxed text-sm sm:text-base">
-                  {product.fullDescription || product.description || product.shortDescription}
-                </p>
+                <RichText
+                  html={product.fullDescription || product.description || product.shortDescription || ''}
+                  className="text-slate-600 mt-4 text-sm sm:text-base"
+                />
 
                 {/* Verified Specs Table */}
                 {product.specifications && Object.keys(product.specifications).length > 0 && (

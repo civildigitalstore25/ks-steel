@@ -213,7 +213,7 @@ export const AdminProductsListPage: React.FC = () => {
                           }`}
                         >
                           {isActive ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <XCircle className="w-3 h-3 text-slate-400" />}
-                          {isActive ? 'Active' : 'Inactive'}
+                          {isActive ? 'Published' : 'Draft'}
                         </span>
                       </td>
                       <td className="py-3.5 px-6 text-right space-x-2">

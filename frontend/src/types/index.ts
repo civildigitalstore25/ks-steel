@@ -22,6 +22,23 @@ export interface Product {
   updatedAt?: string | Date;
 }
 
+export interface BlogPost {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage?: string;
+  coverImageAlt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  status: 'draft' | 'published';
+  authorName: string;
+  publishedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface ProductCategory {
   id: string;
   name: string;
