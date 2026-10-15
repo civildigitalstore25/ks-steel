@@ -1,5 +1,5 @@
 import type { BlogPost } from '../types';
-import { getAdminToken } from './api';
+import { apiUrl, getAdminToken } from './api';
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getAdminToken();
@@ -9,7 +9,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  const response = await fetch(path, { ...options, headers, credentials: 'include' });
+  const response = await fetch(apiUrl(path), { ...options, headers, credentials: 'include' });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(data.error || 'The blog request failed.');

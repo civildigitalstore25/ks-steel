@@ -8,7 +8,11 @@ const CURRENT_VERSION = '2.2.3';
 const TOKEN_KEY = 'ks_admin_token';
 const ADMIN_USER_KEY = 'ks_admin_user';
 
-export const API_BASE_URL = 'frontend_mock_service';
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
+export function apiUrl(path: string): string {
+  return `${API_BASE_URL}${path}`;
+}
 
 // --- AUTH TOKEN HELPERS ---
 
@@ -215,7 +219,7 @@ export async function loginAdmin(credentials: { email: string; password: string 
     throw new Error('Please enter both email and password.');
   }
 
-  const response = await fetch('/api/admin/auth/login', {
+  const response = await fetch(apiUrl('/api/admin/auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -237,7 +241,7 @@ export async function checkAdminMe() {
     throw new Error('Unauthorized');
   }
 
-  const response = await fetch('/api/admin/auth/me', {
+  const response = await fetch(apiUrl('/api/admin/auth/me'), {
     headers: { Authorization: `Bearer ${token}` },
     credentials: 'include'
   });
@@ -249,7 +253,7 @@ export async function checkAdminMe() {
 }
 
 export async function logoutAdmin(): Promise<void> {
-  await fetch('/api/admin/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => undefined);
+  await fetch(apiUrl('/api/admin/auth/logout'), { method: 'POST', credentials: 'include' }).catch(() => undefined);
   removeAdminToken();
 }
 
