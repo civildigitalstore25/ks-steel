@@ -1,11 +1,8 @@
 import "dotenv/config";
 
 const portValue = process.env.PORT?.trim() || "4000";
-const port = Number(portValue);
-
-if (!Number.isInteger(port) || port < 1 || port > 65535) {
-  throw new Error(`PORT must be an integer between 1 and 65535. Received: ${portValue}`);
-}
+const parsedPort = Number(portValue);
+const port = Number.isInteger(parsedPort) && parsedPort >= 1 && parsedPort <= 65535 ? parsedPort : 4000;
 
 export const config = {
   port,

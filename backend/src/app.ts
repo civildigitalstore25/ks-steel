@@ -3,7 +3,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { config } from "./config.js";
 import { uploadsDir } from "./uploadsDir.js";
-import { getDatabase } from "./db/mongo.js";
+import { connectToDatabase, getDatabase } from "./db/mongo.js";
+import { seedDatabase } from "./db/seed.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
@@ -38,6 +39,35 @@ app.get("/", (_request, response) => {
   response.json({ status: "ok", service: "K.S. Steel Corporation API" });
 });
 
+let databaseReady: Promise<void> | null = null;
+
+function ensureDatabase(): Promise<void> {
+  if (!databaseReady) {
+    databaseReady = connectToDatabase()
+      .then(() => seedDatabase())
+      .catch((error: unknown) => {
+        databaseReady = null;
+        throw error;
+      });
+  }
+  return databaseReady;
+}
+
+app.use((request, response, next) => {
+  if (request.path === "/") {
+    next();
+    return;
+  }
+  ensureDatabase()
+    .then(() => next())
+    .catch((error: unknown) => {
+      console.error("Database startup failed:", error);
+      if (!response.headersSent) {
+        response.status(503).json({ error: "Database unavailable" });
+      }
+    });
+});
+
 // Health Check API
 app.get("/api/health", async (_request, response) => {
   try {
@@ -59,3 +89,12 @@ app.use("/api", uploadRoutes);
 app.use((_request, response) => {
   response.status(404).json({ error: "Route not found" });
 });
+
+app.use((error: unknown, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
+  console.error(error);
+  if (!response.headersSent) {
+    response.status(500).json({ error: "Internal server error" });
+  }
+});
+
+export default app;

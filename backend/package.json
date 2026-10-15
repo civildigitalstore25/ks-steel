@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
+    "dev": "tsx watch src/local.ts",
+    "start": "node dist/local.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
