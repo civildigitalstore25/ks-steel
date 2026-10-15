@@ -1,14 +1,9 @@
 import { Router } from "express";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import { uploadImage } from "../controllers/uploadController.js";
 import { requireSuperAdmin } from "../middleware/auth.js";
-
-const uploadsDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+import { uploadsDir } from "../uploadsDir.js";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {

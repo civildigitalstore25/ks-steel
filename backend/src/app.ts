@@ -1,8 +1,8 @@
 import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
-import path from "path";
 import { config } from "./config.js";
+import { uploadsDir } from "./uploadsDir.js";
 import { getDatabase } from "./db/mongo.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -32,8 +32,6 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Static uploads directory serving
-const uploadsDir = path.join(process.cwd(), "uploads");
 app.use("/uploads", express.static(uploadsDir));
 
 // Health Check API
