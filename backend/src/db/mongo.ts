@@ -2,8 +2,7 @@ import { MongoClient, type Db } from "mongodb";
 
 import { config } from "../config.js";
 
-const client = new MongoClient(config.mongodbUri);
-
+let client: MongoClient | undefined;
 let database: Db | undefined;
 
 export async function connectToDatabase(): Promise<Db> {
@@ -11,6 +10,7 @@ export async function connectToDatabase(): Promise<Db> {
     return database;
   }
 
+  client = new MongoClient(config.mongodbUri);
   await client.connect();
   database = client.db(config.mongodbDb);
   await database.command({ ping: 1 });
@@ -27,6 +27,7 @@ export function getDatabase(): Db {
 }
 
 export async function closeDatabase(): Promise<void> {
-  await client.close();
+  await client?.close();
+  client = undefined;
   database = undefined;
 }

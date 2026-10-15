@@ -34,6 +34,10 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 app.use("/uploads", express.static(uploadsDir));
 
+app.get("/", (_request, response) => {
+  response.json({ status: "ok", service: "K.S. Steel Corporation API" });
+});
+
 // Health Check API
 app.get("/api/health", async (_request, response) => {
   try {
