@@ -6,13 +6,12 @@ import {
   XCircle, 
   Edit, 
   Trash2, 
-  ExternalLink,
-  ShieldCheck,
-  RefreshCw,
-  Database
+  ExternalLink, 
+  ShieldCheck, 
+  RefreshCw 
 } from 'lucide-react';
 import type { Product } from '../../types';
-import { fetchAdminProducts, deleteAdminProduct, resetMockData } from '../../services/api';
+import { fetchAdminProducts, deleteAdminProduct } from '../../services/api';
 
 export const AdminDashboardPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,7 +24,7 @@ export const AdminDashboardPage: React.FC = () => {
       const data = await fetchAdminProducts();
       setProducts(data);
     } catch (err) {
-      console.warn('Failed to load products from mock store:', err);
+      console.warn('Failed to load products:', err);
     } finally {
       setLoading(false);
     }
@@ -40,19 +39,11 @@ export const AdminDashboardPage: React.FC = () => {
     try {
       await deleteAdminProduct(id);
       setProducts(products.filter((p) => p.id !== id && (p as any)._id !== id));
-      setNotification('Product deleted from mock database.');
+      setNotification('Product deleted successfully.');
       setTimeout(() => setNotification(''), 3000);
     } catch (err: any) {
       alert(err.message || 'Failed to delete product.');
     }
-  };
-
-  const handleSeedMockData = () => {
-    if (!window.confirm('Re-seed all 35 mock products from master catalog? This will refresh frontend mock storage.')) return;
-    const seeded = resetMockData();
-    setProducts(seeded);
-    setNotification('Mock catalogue reset & seeded successfully with 35 verified products!');
-    setTimeout(() => setNotification(''), 4000);
   };
 
   const totalCount = products.length;
@@ -67,7 +58,7 @@ export const AdminDashboardPage: React.FC = () => {
         <div>
           <span className="text-[#D7A94B] font-extrabold text-xs uppercase tracking-widest flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-[#D7A94B]" />
-            <span>K.S. STEEL CORPORATION ADMIN • FRONTEND MOCK STORAGE</span>
+            <span>K.S. STEEL CORPORATION ADMIN</span>
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#14263D] mt-1">
             Product Management Dashboard
@@ -75,14 +66,6 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleSeedMockData}
-            className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-slate-700"
-            title="Reset and re-seed all 35 mock products in frontend localStorage"
-          >
-            <Database className="w-4 h-4 text-[#D7A94B]" />
-            <span>Seed Mock Data (35)</span>
-          </button>
           <button
             onClick={loadProducts}
             className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:text-[#14263D] shadow-sm transition-colors"

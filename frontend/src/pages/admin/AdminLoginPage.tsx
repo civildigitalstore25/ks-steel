@@ -5,8 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { loginAdmin } from '../../services/api';
 
 export const AdminLoginPage: React.FC = () => {
-  const [email, setEmail] = useState('superadmin@kssteel.com');
-  const [password, setPassword] = useState('SuperAdmin@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -76,7 +76,7 @@ export const AdminLoginPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="superadmin@kssteel.com"
+                placeholder="Enter superadmin email"
                 className="w-full pl-10 pr-4 py-3 bg-[#0B1728] border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#D7A94B] transition-all"
               />
             </div>
@@ -93,7 +93,7 @@ export const AdminLoginPage: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="Enter password"
                 className="w-full pl-10 pr-4 py-3 bg-[#0B1728] border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#D7A94B] transition-all"
               />
             </div>
@@ -117,11 +117,6 @@ export const AdminLoginPage: React.FC = () => {
             )}
           </button>
         </form>
-
-        <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-400 space-y-1">
-          <p className="font-semibold text-[#D7A94B]">Frontend Mock Database Mode Active</p>
-          <p className="text-slate-500">Instant sign-in ready • Pre-filled credentials work without backend</p>
-        </div>
 
       </div>
     </div>
