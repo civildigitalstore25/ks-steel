@@ -137,7 +137,20 @@ export const Footer: React.FC = () => {
 
       <div className="bg-[#070E18] py-3 px-4 text-center text-[11px] sm:text-xs text-slate-500 border-t border-slate-800/80">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-2 sm:pr-36">
-          <span>&copy; {new Date().getFullYear()} K.S. Steel Corporation. All rights reserved.</span>
+          <div className="flex flex-col items-center sm:items-start gap-0.5">
+            <span>&copy; {new Date().getFullYear()} K.S. Steel Corporation. All rights reserved.</span>
+            <span>
+              Design and development by{" "}
+              <a
+                href="https://tomscope.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-300 hover:text-[#D7A94B] transition-colors"
+              >
+                Tom Scope Digital Marketing
+              </a>
+            </span>
+          </div>
           <span>{BUSINESS_INFO.locationShort}</span>
         </div>
       </div>
